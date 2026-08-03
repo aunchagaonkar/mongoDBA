@@ -1,0 +1,15 @@
+# GitHub Pages Jekyll Configuration
+title: MongoDB Associate DBA Study Suite
+description: Practice question sets, curriculum study modules, and core reference guides.
+theme: jekyll-theme-cayman
+
+# Markdown Parser Options
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Exclude scripts and temporary files from Jekyll site build
+exclude:
+  - README.md
+  - .git
