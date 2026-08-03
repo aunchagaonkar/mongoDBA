@@ -353,7 +353,7 @@ Options:
 
 Where is the method for updating multiple documents at once? Where is the filter document defined? Where is the update document defined in this code snippet?
 
-![Code Snippet Diagram](image-3.png)
+![Code Snippet Diagram](../assets/image-3.png)
 
 ---
 

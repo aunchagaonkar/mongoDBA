@@ -41,8 +41,8 @@
 ### Question 3
 **Match the index type to its corresponding description.**
 
-![question](image-4.png)
-![answer](image-5.png)
+![question](../assets/image-4.png)
+![answer](../assets/image-5.png)
 
 - **Single field index**: A single field index is an index on a single field of a document. MongoDB creates a single field index on the `_id` field by default, but additional indexes may be needed for other fields as well. A single field index can also be a multikey index if it operates on an array field.
 - **Compound index**: MongoDB supports compound indexes, where a single index structure holds references to multiple fields within a collection's documents. A compound index is created by specifying the fields that the index should reference, followed by the order in which the fields should be sorted. A compound index can also be a multikey index if one of the fields is an array.

@@ -253,30 +253,30 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a href="index.html">&larr; Portal Dashboard</a>
+      <a href="../index.html">&larr; Portal Dashboard</a>
       <h2>Study Modules</h2>
     </div>
 
     <ul class="sidebar-menu" id="moduleList">
-      <li><a href="reader.html?file=Chapter1.md" data-file="Chapter1.md">Ch 01: Document Model</a></li>
-      <li><a href="reader.html?file=Chapter2.md" data-file="Chapter2.md">Ch 02: Data Modeling Intro</a></li>
-      <li><a href="reader.html?file=Chapter3.md" data-file="Chapter3.md">Ch 03: MongoDB Shell</a></li>
-      <li><a href="reader.html?file=Chapter4.md" data-file="Chapter4.md">Ch 04: Connecting & Drivers</a></li>
-      <li><a href="reader.html?file=Chapter5.md" data-file="Chapter5.md">Ch 05: CRUD: Insert & Find</a></li>
-      <li><a href="reader.html?file=Chapter6.md" data-file="Chapter6.md">Ch 06: CRUD: Replace & Delete</a></li>
-      <li><a href="reader.html?file=Chapter7.md" data-file="Chapter7.md">Ch 07: Query Results</a></li>
-      <li><a href="reader.html?file=Chapter8.md" data-file="Chapter8.md">Ch 08: Indexes & Explain</a></li>
-      <li><a href="reader.html?file=Chapter9.md" data-file="Chapter9.md">Ch 09: Advanced Indexes</a></li>
-      <li><a href="reader.html?file=Chapter10.md" data-file="Chapter10.md">Ch 10: Server Logging</a></li>
-      <li><a href="reader.html?file=Chapter11.md" data-file="Chapter11.md">Ch 11: MongoDB Atlas</a></li>
-      <li><a href="reader.html?file=Chapter12.md" data-file="Chapter12.md">Ch 12: DBA CLI Tools</a></li>
-      <li><a href="reader.html?file=Chapter13.md" data-file="Chapter13.md">Ch 13: Metrics & Monitoring</a></li>
-      <li><a href="reader.html?file=Chapter14.md" data-file="Chapter14.md">Ch 14: Backup & Recovery</a></li>
-      <li><a href="reader.html?file=Chapter15.md" data-file="Chapter15.md">Ch 15: Upgrades & Maintenance</a></li>
-      <li><a href="reader.html?file=Chapter16.md" data-file="Chapter16.md">Ch 16: Replication</a></li>
-      <li><a href="reader.html?file=Chapter17.md" data-file="Chapter17.md">Ch 17: Database Security</a></li>
+      <li><a href="reader.html?file=modules/Chapter1.md" data-file="modules/Chapter1.md">Ch 01: Document Model</a></li>
+      <li><a href="reader.html?file=modules/Chapter2.md" data-file="modules/Chapter2.md">Ch 02: Data Modeling Intro</a></li>
+      <li><a href="reader.html?file=modules/Chapter3.md" data-file="modules/Chapter3.md">Ch 03: MongoDB Shell</a></li>
+      <li><a href="reader.html?file=modules/Chapter4.md" data-file="modules/Chapter4.md">Ch 04: Connecting & Drivers</a></li>
+      <li><a href="reader.html?file=modules/Chapter5.md" data-file="modules/Chapter5.md">Ch 05: CRUD: Insert & Find</a></li>
+      <li><a href="reader.html?file=modules/Chapter6.md" data-file="modules/Chapter6.md">Ch 06: CRUD: Replace & Delete</a></li>
+      <li><a href="reader.html?file=modules/Chapter7.md" data-file="modules/Chapter7.md">Ch 07: Query Results</a></li>
+      <li><a href="reader.html?file=modules/Chapter8.md" data-file="modules/Chapter8.md">Ch 08: Indexes & Explain</a></li>
+      <li><a href="reader.html?file=modules/Chapter9.md" data-file="modules/Chapter9.md">Ch 09: Advanced Indexes</a></li>
+      <li><a href="reader.html?file=modules/Chapter10.md" data-file="modules/Chapter10.md">Ch 10: Server Logging</a></li>
+      <li><a href="reader.html?file=modules/Chapter11.md" data-file="modules/Chapter11.md">Ch 11: MongoDB Atlas</a></li>
+      <li><a href="reader.html?file=modules/Chapter12.md" data-file="modules/Chapter12.md">Ch 12: DBA CLI Tools</a></li>
+      <li><a href="reader.html?file=modules/Chapter13.md" data-file="modules/Chapter13.md">Ch 13: Metrics & Monitoring</a></li>
+      <li><a href="reader.html?file=modules/Chapter14.md" data-file="modules/Chapter14.md">Ch 14: Backup & Recovery</a></li>
+      <li><a href="reader.html?file=modules/Chapter15.md" data-file="modules/Chapter15.md">Ch 15: Upgrades & Maintenance</a></li>
+      <li><a href="reader.html?file=modules/Chapter16.md" data-file="modules/Chapter16.md">Ch 16: Replication</a></li>
+      <li><a href="reader.html?file=modules/Chapter17.md" data-file="modules/Chapter17.md">Ch 17: Database Security</a></li>
       <li style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 10px;">
-        <a href="reader.html?file=PracticeQuestions.md" data-file="PracticeQuestions.md">Core Practice Bank (.md)</a>
+        <a href="reader.html?file=practice/PracticeQuestions.md" data-file="practice/PracticeQuestions.md">Core Practice Bank (.md)</a>
       </li>
     </ul>
   </aside>
@@ -318,7 +318,7 @@
     }
 
     async function loadMarkdown() {
-      let file = getQueryParam('file') || 'Chapter1.md';
+      let file = getQueryParam('file') || 'modules/Chapter1.md';
 
       // Highlight active link in sidebar
       const links = document.querySelectorAll('.sidebar-menu a');
@@ -357,7 +357,7 @@
           document.title = firstHeading.innerText + ' — MongoDB DBA Study Guide';
         }
       } catch (err) {
-        contentDiv.innerHTML = `<h2 style="color: #d9534f;">Failed to load module</h2><p>Could not load <code>${file}</code>. Make sure the file exists and is accessible.</p><p><a href="index.html">&larr; Return to Dashboard</a></p>`;
+        contentDiv.innerHTML = `<h2 style="color: #d9534f;">Failed to load module</h2><p>Could not load <code>${file}</code>. Make sure the file exists and is accessible.</p><p><a href="../index.html">&larr; Return to Dashboard</a></p>`;
       }
     }
 

@@ -28,8 +28,8 @@
 - **d. Connect with MongoDB Charts**
   - **Incorrect**: MongoDB Charts is a data visualization tool that you can use with your MongoDB data. Open the Atlas dashboard to check which connection strings are available.
 
-![Question](image-1.png)
-![Answer](image-2.png)
+![Question](../assets/image-1.png)
+![Answer](../assets/image-2.png)
 
 ---
 

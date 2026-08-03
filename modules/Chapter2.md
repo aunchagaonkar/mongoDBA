@@ -180,7 +180,7 @@
 ### Embedding vs. Referencing
 Here's a quick summary of the pros and cons of embedding vs. referencing in MongoDB:
 
-![Embedding vs. Referencing](image.png)
+![Embedding vs. Referencing](../assets/image.png)
 
 ---
 
