@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Practice Quiz — Foundational Set</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      max-width: 1300px;
+      width: 94%;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .top-nav {
+      margin-bottom: 15px;
+    }
+    .top-nav a {
+      color: #13aa52;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+    h1 {
+      text-align: center;
+      color: #13aa52;
+    }
+    .score-box {
+      background: #e9f7ef;
+      border: 2px solid #13aa52;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: normal;
+      background: #eee;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .question-text {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+    }
+    code {
+      background: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+    .option-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .option-item:hover {
+      background-color: #f5f5f5;
+    }
+    .option-item input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    .option-label {
+      flex: 1;
+    }
+    .option-item.correct-answer {
+      background-color: #d4edda !important;
+      border-color: #c3e6cb !important;
+      color: #155724 !important;
+      font-weight: bold;
+    }
+    .option-item.wrong-selected {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid #13aa52;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .q-submitted .explanation {
+      display: block;
+    }
+    .btn-submit-q {
+      background-color: #13aa52;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-submit-q:hover {
+      background-color: #118f45;
+    }
+    .btn-submit-q:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .actions-bar {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-main {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn-main:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-nav">
+    <a href="index.html">&larr; Back to Portal Dashboard</a>
+  </div>
+
+  <h1>MongoDB DBA Practice Quiz — Foundational Set</h1>
+  <div id="scoreBox" class="score-box">
+    Score: <span id="correctCount">0</span> / <span id="answeredCount">0</span> Answered &nbsp;|&nbsp; Total Questions: <span id="totalCount">30</span>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="actions-bar">
+    <button type="button" class="btn-main" onclick="submitAll()">Submit All Remaining</button>
+    <button type="button" class="btn-main" style="background-color:#6c757d;" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+            "id": 1,
+            "text": "**A monitoring application stores temperature readings from IoT sensors in a `readings` collection. Each document includes a `temperature` field. A MongoDB engineer needs to retrieve all readings where `temperature` is between 20 and 30 degrees, inclusive.**\n\nWhich query expression should the engineer use to retrieve the correct documents?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`{ temperature: { $gte: 20, $lte: 30 } }`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`{ temperature: { $gt: 20, $lt: 30 } }`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`{ temperature: { $gte: 20 } }`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`{ temperature: { $lte: 30 } }`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Uses `$gte` (\u2265 20) and `$lte` (\u2264 30) to capture both endpoints inclusively.\n\n**Option B is incorrect:** Uses strict comparisons, excluding 20 and 30.\n\n**Option C is incorrect:** Only applies a lower bound; no upper limit.\n\n**Option D is incorrect:** Only applies an upper bound; no lower limit."
+      },
+      {
+            "id": 2,
+            "text": "**An HR application stores employee records in an `employees` collection. Each document includes a `department` field. A MongoDB developer needs to return the total number of employees in the \"sales\" department.**\n\nWhich method call should the developer use to return the correct count?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.employees.countDocuments({ department: \"sales\" })`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`db.employees.find({ department: \"sales\" }).limit(1)`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`db.employees.find({ department: \"sales\" })`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`db.employees.countDocuments()`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** `countDocuments()` with a filter returns the exact count of matching documents.\n\n**Option B is incorrect:** Returns at most one document, not a count.\n\n**Option C is incorrect:** Returns matching documents, not a count.\n\n**Option D is incorrect:** Counts all documents without filtering by department."
+      },
+      {
+            "id": 3,
+            "text": "**An e-commerce application stores orders in an `orders` collection. Each document includes a `total` field. A MongoDB developer needs to count all orders where `total` is greater than 100.**\n\nWhich method call should the developer use to return the correct count?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.orders.countDocuments({ total: { $gt: 100 } })`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`db.orders.countDocuments({ total: 100 })`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`db.orders.find({ total: { $gt: 100 } })`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`db.orders.countDocuments({ total: { $gte: 100 } })`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Uses `$gt` (strictly greater than 100) with `countDocuments()`.\n\n**Option B is incorrect:** Only matches orders where `total` exactly equals 100.\n\n**Option C is incorrect:** Returns matching documents, not a count.\n\n**Option D is incorrect:** Includes orders where `total` equals 100, which is not \"greater than 100\"."
+      },
+      {
+            "id": 4,
+            "text": "**A task management application stores tasks in a `tasks` collection. Each document includes a `status` field. A MongoDB developer needs to delete all tasks where `status` is \"archived\".**\n\nWhich operation should the developer use to remove the matching documents?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.tasks.deleteMany({ status: \"archived\" })`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`db.tasks.deleteOne({ status: \"archived\" })`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`db.tasks.updateMany({ status: \"archived\" }, { $set: { deleted: true } })`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`db.tasks.deleteMany({ status: { $ne: \"archived\" } })`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Deletes all documents matching the filter.\n\n**Option B is incorrect:** Only deletes the first matching document.\n\n**Option C is incorrect:** Updates documents rather than deleting them.\n\n**Option D is incorrect:** Deletes all documents that are *not* \"archived\"."
+      },
+      {
+            "id": 5,
+            "text": "**A developer needs to find all orders in an `orders` collection where the `finalPrice` field equals the `originalPrice` field, indicating no discount was applied.**\n\nWhich query should the developer use?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.orders.find({ $expr: { $eq: [\"$finalPrice\", \"$originalPrice\"] } })`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`db.orders.find({ finalPrice: originalPrice })`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`db.orders.find({ finalPrice: { $eq: \"originalPrice\" } })`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`db.orders.find({ finalPrice: \"$originalPrice\" })`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** `$expr` allows comparing two document fields against each other.\n\n**Option B is incorrect:** `originalPrice` is treated as a literal variable, not a field reference.\n\n**Option C is incorrect:** Compares `finalPrice` to the string `\"originalPrice\"`, not the field value.\n\n**Option D is incorrect:** `\"$originalPrice\"` is a plain string, not a field reference outside of aggregation expressions."
+      },
+      {
+            "id": 6,
+            "text": "**A product analytics system runs the following aggregation pipeline on a `products` collection. Each document includes an `inStock` boolean field and a `salesCount` field.**\n\n```javascript\ndb.products.aggregate([\n  { $match: { inStock: true } },\n  { $sort: { salesCount: -1 } },\n  { $limit: 10 }\n])\n```\n\nWhat does the `$limit` stage produce in this pipeline?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The 10 documents with the highest `salesCount`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "All in-stock documents sorted by `salesCount`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "The total count of in-stock products"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Documents where `salesCount` equals 10"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** After filtering in-stock items and sorting by `salesCount` descending, `$limit: 10` returns the top 10.\n\n**Option B is incorrect:** `$limit` restricts the number of output documents.\n\n**Option C is incorrect:** `$limit` does not produce a count.\n\n**Option D is incorrect:** `$limit` limits quantity of output, not filters by value."
+      },
+      {
+            "id": 7,
+            "text": "**An analytics team builds aggregation pipelines against a large `transactions` collection. A MongoDB developer places `$match` as the first stage in the pipeline.**\n\nWhat is the benefit the developer gains by placing `$match` at the start of a pipeline?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Reduces the number of documents passed to subsequent stages"
+                  },
+                  {
+                        "id": "b",
+                        "text": "Ensures `$group` operates on pre-sorted input"
+                  },
+                  {
+                        "id": "c",
+                        "text": "Prevents `$project` from including unnecessary fields"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Allows `$sort` to use an index regardless of pipeline position"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Filtering early reduces the working dataset for all downstream stages, improving performance.\n\n**Option B is incorrect:** `$match` filters documents; it does not sort them.\n\n**Option C is incorrect:** `$project` controls field inclusion independently of `$match`.\n\n**Option D is incorrect:** Index use by `$sort` depends on placement and index availability, not `$match` position."
+      },
+      {
+            "id": 8,
+            "text": "**In what format does MongoDB store documents internally?**",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "BSON (Binary JSON)"
+                  },
+                  {
+                        "id": "b",
+                        "text": "JSON (JavaScript Object Notation)"
+                  },
+                  {
+                        "id": "c",
+                        "text": "XML (Extensible Markup Language)"
+                  },
+                  {
+                        "id": "d",
+                        "text": "CSV (Comma-Separated Values)"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** MongoDB stores documents in BSON format, a binary-encoded serialization of JSON-like documents.\n\n**Option B is incorrect:** JSON is the representation used in queries and shell output, not the internal storage format.\n\n**Option C is incorrect:** MongoDB does not use XML for document storage.\n\n**Option D is incorrect:** MongoDB does not use CSV for document storage."
+      },
+      {
+            "id": 9,
+            "text": "**A healthcare application stores patient records. Each patient has a medical history with entries added continuously over time. The history entries are also queried independently by a billing system.**\n\nWhich data modeling approach is more appropriate for storing medical history entries?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Store medical history entries in a separate collection and reference them from the patient document."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Store medical history entries as an unbounded array embedded within the patient document."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Store both patient and history data as flat key-value pairs in the same document."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Store the patient document embedded within each individual medical history entry."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Unbounded growth and independent access by the billing system make a separate referenced collection the appropriate choice.\n\n**Option B is incorrect:** Unbounded embedded arrays cause documents to grow indefinitely, exceeding the 16 MB document limit and degrading performance.\n\n**Option C is incorrect:** Flat key-value pairs cannot efficiently represent structured, growing history entries.\n\n**Option D is incorrect:** This inverts the natural relationship and causes significant data duplication."
+      },
+      {
+            "id": 10,
+            "text": "**A team configures their analytics application to use `secondaryPreferred` read preference to avoid impacting production traffic. A database administrator warns this does not fully isolate the analytics workload.**\n\nWhat is the reason for the administrator's concern?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`secondaryPreferred` falls back to the primary when no secondary is available."
+                  },
+                  {
+                        "id": "b",
+                        "text": "`secondaryPreferred` routes queries to the secondary with the highest replication lag."
+                  },
+                  {
+                        "id": "c",
+                        "text": "`secondaryPreferred` is not supported for aggregation pipelines."
+                  },
+                  {
+                        "id": "d",
+                        "text": "`secondaryPreferred` requires a dedicated analytics node to be configured before it takes effect."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** If all secondaries are unavailable, `secondaryPreferred` routes reads to the primary, potentially impacting production traffic.\n\n**Option B is incorrect:** MongoDB does not route based on highest lag; it selects the closest or least-lagged secondary.\n\n**Option C is incorrect:** `secondaryPreferred` is supported for aggregation pipelines.\n\n**Option D is incorrect:** No dedicated node configuration is required."
+      },
+      {
+            "id": 11,
+            "text": "**An organization's database stores financial transactions updated continuously throughout the day. The recovery point objective (RPO) requires no more than one hour of data loss.**\n\nWhich backup strategy satisfies this requirement?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "A continuous backup strategy with point-in-time recovery (PITR)"
+                  },
+                  {
+                        "id": "b",
+                        "text": "A scheduled logical backup strategy utilizing `mongodump` every 24 hours"
+                  },
+                  {
+                        "id": "c",
+                        "text": "A cloud-provider snapshot backup strategy"
+                  },
+                  {
+                        "id": "d",
+                        "text": "A replication-based backup strategy utilizing a delayed replica set"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** PITR enables recovery to any point within the backup window, satisfying a sub-hour RPO.\n\n**Option B is incorrect:** A 24-hour cycle means up to 24 hours of data loss, violating the 1-hour RPO.\n\n**Option C is incorrect:** Snapshots are typically scheduled and may not meet a 1-hour RPO without PITR capability.\n\n**Option D is incorrect:** A delayed replica introduces intentional lag, which can exceed the RPO window."
+      },
+      {
+            "id": 12,
+            "text": "**A MongoDB database administrator configures a self-managed MongoDB deployment and needs to enable encryption at rest using MongoDB's native capability.**\n\nWhich storage engine should the administrator use to get built-in encryption at rest support?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "WiredTiger with the encrypted storage engine option"
+                  },
+                  {
+                        "id": "b",
+                        "text": "WiredTiger with client-side field level encryption enabled"
+                  },
+                  {
+                        "id": "c",
+                        "text": "WiredTiger with TLS encryption configured on the network interface"
+                  },
+                  {
+                        "id": "d",
+                        "text": "WiredTiger with encrypted audit logs enabled"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** MongoDB Enterprise's WiredTiger Encrypted Storage Engine natively encrypts data files on disk.\n\n**Option B is incorrect:** CSFLE encrypts data in the application layer \u2014 it is not a storage engine option for at-rest encryption.\n\n**Option C is incorrect:** TLS encrypts data in transit, not at rest.\n\n**Option D is incorrect:** Encrypted audit logs protect audit records, not all data files at rest."
+      },
+      {
+            "id": 13,
+            "text": "**What is the purpose of placing sort fields between equality and range fields in a compound index?**",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "To allow the index to satisfy the query's sort order without performing an in-memory sort"
+                  },
+                  {
+                        "id": "b",
+                        "text": "To ensure the sort field is always included in the index prefix for equality queries"
+                  },
+                  {
+                        "id": "c",
+                        "text": "To prevent the query planner from selecting the index for range-only queries"
+                  },
+                  {
+                        "id": "d",
+                        "text": "To compress the sort field entries so the index consumes less disk space"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** The ESR (Equality, Sort, Range) rule positions sort fields so the index naturally provides the required order.\n\n**Option B is incorrect:** Index prefixes are based on equality fields, not sort fields.\n\n**Option C is incorrect:** The placement of sort fields does not prevent range-only query index usage.\n\n**Option D is incorrect:** Field ordering in a compound index does not affect compression."
+      },
+      {
+            "id": 14,
+            "text": "**A `logs` collection has a compound index `{ timestamp: 1, status: 1 }`. A query filters documents by a `timestamp` range and sorts results by `status`. A performance review shows an in-memory `SORT` stage.**\n\nWhat change should the administrator make to eliminate it?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Recreate the index as `{ status: 1, timestamp: 1 }`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "Recreate the index as `{ timestamp: -1, status: 1 }`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "Add a partial filter expression on `timestamp`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Convert the index to a TTL index on `timestamp`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Following the ESR rule, placing the sort field (`status`) before the range field (`timestamp`) allows the index to serve the sort order directly.\n\n**Option B is incorrect:** Reversing the sort direction of `timestamp` does not fix the sort order mismatch for `status`.\n\n**Option C is incorrect:** Partial indexes limit which documents are indexed \u2014 they do not resolve in-memory sort issues.\n\n**Option D is incorrect:** TTL indexes expire documents \u2014 they do not improve sort performance."
+      },
+      {
+            "id": 15,
+            "text": "**A team creates the compound index `{ category: 1, brand: 1, price: 1 }` on a `products` collection. A MongoDB database administrator needs to determine which query can use this index.**\n\nWhich query should the administrator identify as able to use the index?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "A query filtering on `category` and `brand`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "A query filtering on `brand` and `price` only"
+                  },
+                  {
+                        "id": "c",
+                        "text": "A query filtering on `price` only"
+                  },
+                  {
+                        "id": "d",
+                        "text": "A query filtering on `brand` only"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** This query uses the first two fields of the index prefix, which is a valid prefix match.\n\n**Option B is incorrect:** Skipping `category` (the leading field) means the index prefix is not satisfied.\n\n**Option C is incorrect:** `price` is the third field; the index cannot be used without the leading fields.\n\n**Option D is incorrect:** `brand` is not the leading field; the prefix is not satisfied."
+      },
+      {
+            "id": 16,
+            "text": "**A development team maintains the compound index `{ tenantId: 1, userId: 1, eventType: 1 }` on an `audit` collection. A new reporting query filters on `tenantId` and `eventType` but not `userId`. A MongoDB database administrator reviews the query plan and finds the index is used but with a higher-than-expected number of keys examined.**\n\nWhat should the administrator understand as the cause of this behavior?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The query includes `tenantId` but skips `userId`, so MongoDB scans all tenant entries before applying the `eventType` filter."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The query skips `tenantId`, forcing MongoDB to scan the entire index before applying any filter."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Compound indexes cannot filter on non-adjacent fields, so `eventType` is evaluated as a post-scan filter."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The index does not support equality filters on `eventType` when `userId` is absent from the query."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Because `userId` is absent, MongoDB cannot narrow the scan within the tenant's index range and must examine all entries under that `tenantId` before filtering on `eventType`.\n\n**Option B is incorrect:** The query does include `tenantId`, satisfying the index prefix.\n\n**Option C is incorrect:** MongoDB can still use part of the index; it just performs extra key examination when a middle field is skipped.\n\n**Option D is incorrect:** The index can still be used; the issue is efficiency, not capability."
+      },
+      {
+            "id": 17,
+            "text": "**A MongoDB database administrator analyzes a slow query on a `customers` collection. The query planner output shows `COLLSCAN` rather than `IXSCAN`.**\n\nWhich architectural component should the administrator investigate as responsible for choosing between a collection scan and an index scan when executing a query?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The query planner, which evaluates available indexes and selects the execution plan"
+                  },
+                  {
+                        "id": "b",
+                        "text": "The WiredTiger storage engine, which decides whether to use a B-tree or heap scan"
+                  },
+                  {
+                        "id": "c",
+                        "text": "The replication layer, which routes reads to the node with the lowest scan cost"
+                  },
+                  {
+                        "id": "d",
+                        "text": "The aggregation framework, which rewrites queries to avoid collection scans"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** The query planner selects the winning plan by evaluating candidate plans, including available indexes.\n\n**Option B is incorrect:** WiredTiger executes the chosen plan \u2014 it does not make the planning decision.\n\n**Option C is incorrect:** The replication layer handles data synchronization, not query planning.\n\n**Option D is incorrect:** The aggregation framework processes pipelines \u2014 it does not rewrite `find()` queries."
+      },
+      {
+            "id": 18,
+            "text": "**A MongoDB developer runs a query on a `products` collection and wants to verify whether the query uses an index. The developer calls `db.products.find({ sku: \"ABC123\" }).explain()`. The output shows `\"stage\": \"COLLSCAN\"` in the winning plan.**\n\nWhat does this indicate to the developer?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The query scanned the entire collection because no suitable index was used."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The query used an index but fell back to a collection scan for tie-breaking."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The query planner rejected all available indexes because the collection is too small."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The query executed successfully and the collection scan completed faster than the index scan."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** `COLLSCAN` means MongoDB examined every document in the collection \u2014 no index was used for this query.\n\n**Option B is incorrect:** `COLLSCAN` in the winning plan means no index was used at all.\n\n**Option C is incorrect:** Collection size can influence plan selection, but `COLLSCAN` does not specifically indicate this reason.\n\n**Option D is incorrect:** While a collection scan can sometimes win a plan race, the presence of `COLLSCAN` alone does not confirm this."
+      },
+      {
+            "id": 19,
+            "text": "**A MongoDB database administrator configures a sharded cluster for an application that stores user activity events with a `timestamp` field. The team is deciding between hashed sharding and ranged sharding on `timestamp`.**\n\nWhat is the reason the administrator should give for why hashed sharding produces more uniform data distribution?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Hashed sharding distributes documents using a hash of the shard key value, spreading inserts evenly across shards."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Hashed sharding reorders documents within each shard to balance chunk sizes automatically."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Ranged sharding on `timestamp` creates more chunks than hashed sharding, increasing balancer overhead."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Hashed sharding prevents the balancer from migrating chunks, reducing latency during write-heavy workloads."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Hashing the `timestamp` value randomizes its distribution, avoiding the hotspot problem that ranged sharding creates for monotonically increasing fields.\n\n**Option B is incorrect:** Hashed sharding affects how documents are assigned to shards \u2014 it does not reorder documents within shards.\n\n**Option C is incorrect:** The number of chunks is not the primary reason for distribution differences.\n\n**Option D is incorrect:** Hashed sharding does not prevent chunk migration."
+      },
+      {
+            "id": 20,
+            "text": "**A MongoDB developer runs a query on a sharded `orders` collection that filters on a field not included in the shard key. A database administrator explains that this query will perform a scatter-gather operation.**\n\nWhat happens to the developer's query during a scatter-gather operation in a sharded cluster?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The `mongos` router sends the query to all shards and merges the results before returning them to the client."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The `mongos` router sends the query to the config servers, which identify the matching documents across shards."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The `mongos` router forwards the query to the primary shard, which relays it to the remaining shards."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The `mongos` router buffers the query until the balancer completes any in-progress chunk migrations."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Without a shard key filter, `mongos` cannot target a specific shard and must broadcast the query to all shards, then merge results.\n\n**Option B is incorrect:** Config servers store metadata (chunk routing info) \u2014 they do not execute queries.\n\n**Option C is incorrect:** `mongos` sends the query directly to all shards \u2014 it does not relay through the primary shard.\n\n**Option D is incorrect:** `mongos` does not buffer queries waiting for the balancer."
+      },
+      {
+            "id": 21,
+            "text": "**A MongoDB database administrator sets up monitoring for a MongoDB replica set. The team needs visibility into whether secondary nodes are keeping pace with the primary.**\n\nWhich metric should the administrator include in the monitoring strategy to track this?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Replication lag between the primary and each secondary"
+                  },
+                  {
+                        "id": "b",
+                        "text": "The number of active client connections on each secondary node"
+                  },
+                  {
+                        "id": "c",
+                        "text": "The WiredTiger cache eviction rate on the primary node"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Replication oplog window length on the primary node"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Replication lag measures how far behind each secondary is from the primary, directly indicating whether secondaries are keeping pace.\n\n**Option B is incorrect:** Connection counts do not indicate replication health.\n\n**Option C is incorrect:** Cache eviction relates to memory pressure on the primary, not secondary replication state.\n\n**Option D is incorrect:** The oplog window tells you how much history is available for recovery, not whether secondaries are caught up."
+      },
+      {
+            "id": 22,
+            "text": "**A MongoDB database administrator monitors a replica set secondary using `db.serverStatus()` and needs to determine whether the node is caught up with the primary.**\n\nWhich section of the output should the administrator check for replication state information?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The `repl` section"
+                  },
+                  {
+                        "id": "b",
+                        "text": "The `locks` section"
+                  },
+                  {
+                        "id": "c",
+                        "text": "The `opcounters` section"
+                  },
+                  {
+                        "id": "d",
+                        "text": "The `mem` section"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** The `repl` section of `db.serverStatus()` output contains replication state information, including optime and lag details.\n\n**Option B is incorrect:** The `locks` section reports lock acquisition and wait statistics.\n\n**Option C is incorrect:** The `opcounters` section reports the rate of CRUD and command operations.\n\n**Option D is incorrect:** The `mem` section reports memory usage statistics."
+      },
+      {
+            "id": 23,
+            "text": "**A MongoDB deployment runs complex aggregation pipelines that involve multiple `$group` and `$sort` stages on large collections. The MongoDB database administrator observes that the host system experiences sustained 100% utilization load during these jobs, causing all other database queries to slow down simultaneously.**\n\nWhich resource bottleneck should the administrator identify as affecting this deployment?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "CPU saturation"
+                  },
+                  {
+                        "id": "b",
+                        "text": "Disk I/O saturation"
+                  },
+                  {
+                        "id": "c",
+                        "text": "Lock saturation"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Network saturation"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Complex `$group` and `$sort` stages are compute-intensive. Sustained 100% utilization during these operations indicates CPU saturation.\n\n**Option B is incorrect:** Disk I/O saturation typically manifests as high read/write wait times, not CPU utilization at 100%.\n\n**Option C is incorrect:** Lock contention causes specific operations to wait, not a sustained 100% overall load.\n\n**Option D is incorrect:** Network saturation affects data transfer rates and latency, not CPU utilization."
+      },
+      {
+            "id": 24,
+            "text": "**A MongoDB database administrator designs the access control model for a new MongoDB deployment. A security policy requires applying the principle of least privilege to all database users.**\n\nWhat does the principle of least privilege mean in the context of the administrator's MongoDB deployment?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Each user should be granted only the permissions required to perform the user's specific tasks."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Each user should be granted the lowest available built-in role, regardless of the user's actual responsibilities."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Each user should authenticate using the authentication mechanism with the fewest configuration steps."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Each user should have access only to the collections created after the user's account was provisioned."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** The principle of least privilege limits access rights for accounts to only what is strictly required.\n\n**Option B is incorrect:** Least privilege is about matching permissions to responsibilities \u2014 not blindly assigning the lowest role.\n\n**Option C is incorrect:** The principle of least privilege applies to authorization (permissions), not authentication mechanisms.\n\n**Option D is incorrect:** Least privilege is about the scope of access, not the timing of collection creation."
+      },
+      {
+            "id": 25,
+            "text": "**A development team creates a MongoDB service account for an application that only generates read-only reports. A developer assigns the built-in `dbOwner` role to this account on the target database.**\n\nWhy does assigning the `dbOwner` role violate the principle of least privilege for this application?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "It grants write, collection modification, and administrative privileges that exceed the application's required read-only access."
+                  },
+                  {
+                        "id": "b",
+                        "text": "It grants global read and write access to all databases across the entire MongoDB deployment."
+                  },
+                  {
+                        "id": "c",
+                        "text": "It grants cluster-wide administrative privileges, allowing the application to modify replication and sharding configurations."
+                  },
+                  {
+                        "id": "d",
+                        "text": "It bypasses Network Isolation rules, allowing the service account to connect from unauthorized IP addresses."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** `dbOwner` combines `readWrite`, `dbAdmin`, and `userAdmin` \u2014 far more than the read-only access required.\n\n**Option B is incorrect:** `dbOwner` is scoped to the target database, not all databases (that would be `root` or `dbOwnerAnyDatabase`).\n\n**Option C is incorrect:** Cluster-wide privileges are granted by roles like `clusterAdmin`, not `dbOwner`.\n\n**Option D is incorrect:** `dbOwner` does not affect network access controls."
+      },
+      {
+            "id": 26,
+            "text": "**A MongoDB administrator is asked to add the privilege `find` to a role named `myrole`.**\n\nWhat is the correct syntax for adding this privilege to the role in MongoDB?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "**\n  ```javascript\n  db.runCommand({\n    grantPrivilegesToRole: \"myRole\",\n    privileges: {\n      resource: { db: \"testDB\", collection: \"\" },\n      actions: [\"find\"]\n    },\n    writeConcern: { w: \"majority\" },\n    comment: \"Granting find action\"\n  })\n  ```"
+                  },
+                  {
+                        "id": "b",
+                        "text": "**\n  ```javascript\n  db.runCommand({\n    grantPrivilegesToRole: \"myRole\",\n    privileges: [\n      {\n        resource: { db: \"testDB\", collection: \"\" },\n        actions: [\"find\"]\n      }\n    ],\n    writeConcern: { w: \"majority\" },\n    comment: \"Granting find action\"\n  })\n  ```"
+                  },
+                  {
+                        "id": "c",
+                        "text": "**\n  ```javascript\n  db.runCommand({\n    grantPrivilegesToRole: \"myRole\",\n    privileges: [\n      {\n        db: \"testDB\",\n        collection: \"\",\n        actions: [\"find\"]\n      }\n    ],\n    writeConcern: { w: \"majority\" },\n    comment: \"Granting find action\"\n  })\n  ```"
+                  },
+                  {
+                        "id": "d",
+                        "text": "**\n  ```javascript\n  db.runCommand({\n    grantPrivilegesToRole: \"myRole\",\n    privileges: [\n      {\n        resource: { db: \"testDB\", collection: \"\" },\n        actions: \"find\"\n      }\n    ],\n    writeConcern: { w: \"majority\" },\n    comment: \"Granting find action\"\n  })\n  ```"
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "**Option A is incorrect:** The `privileges` field must be an **array**, not a single object.\n\n**Option B is correct:** `privileges` is correctly provided as an array with a valid `resource` object and an `actions` array.\n\n**Option C is incorrect:** The privilege object must have a nested `resource` field \u2014 `db` and `collection` cannot be placed at the top level.\n\n**Option D is incorrect:** The `actions` field must be an **array**, not a plain string."
+      },
+      {
+            "id": 27,
+            "text": "**A MongoDB administrator manages an e-commerce platform. The platform has a `sales` database that includes the role `DailyReport` and three collections: `orders`, `customers`, `products`.**\n\n**The `DailyReport` role is currently used to generate reports on the `orders` collection. This role also needs access to the `products` collection in order to query products.**\n\nWhat option should the administrator use to grant the correct access to the `DailyReport` role?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "**\n  ```javascript\n  use sales\n  db.runCommand({\n    grantPrivilegesToRole: \"DailyReport\",\n    privileges: [\n      {\n        resource: { db: \"sales\", collection: \"products\" },\n        actions: [\"find\"]\n      }\n    ]\n  })\n  ```"
+                  },
+                  {
+                        "id": "b",
+                        "text": "**\n  ```javascript\n  use system\n  db.runCommand({\n    grantPrivilegesToRole: \"DailyReport\",\n    privileges: [\n      {\n        resource: { db: \"sales\", collection: \"products\" },\n        actions: [\"find\"]\n      }\n    ]\n  })\n  ```"
+                  },
+                  {
+                        "id": "c",
+                        "text": "**\n  ```javascript\n  use sales\n  db.runCommand({\n    grantPrivilegesToRole: \"DailyReport\",\n    privileges: [\n      {\n        resource: { db: \"sales\", collection: \"products\" },\n        actions: [\"create\"]\n      },\n      {\n        resource: { db: \"sales\", collection: \"orders\" },\n        actions: [\"find\"]\n      }\n    ]\n  })\n  ```"
+                  },
+                  {
+                        "id": "d",
+                        "text": "**\n  ```javascript\n  use sales\n  db.runCommand({\n    grantPrivilegesToRole: \"DailyReportv2\",\n    privileges: [\n      {\n        resource: { db: \"sales\", collection: \"products\" },\n        actions: [\"find\"]\n      },\n      {\n        resource: { db: \"sales\", collection: \"orders\" },\n        actions: [\"find\"]\n      }\n    ]\n  })\n  ```"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** Uses the correct `sales` database context and grants only `find` on `products` \u2014 the minimum required access.\n\n**Option B is incorrect:** The `system` database is not the correct context. The command must be run against the `sales` database.\n\n**Option C is incorrect:** Grants `create` on `products` (unnecessary) and redundantly adds `find` on `orders` (already granted).\n\n**Option D is incorrect:** Targets `DailyReportv2` \u2014 a different role \u2014 instead of the existing `DailyReport` role."
+      },
+      {
+            "id": 28,
+            "text": "**The `students` collection includes the following sample documents:**\n\n```javascript\n{ \"_id\": 1, \"name\": \"Alice\", \"grade\": \"A\", \"age\": 14, \"class\": \"Math\" }\n{ \"_id\": 2, \"name\": \"Bob\",   \"grade\": \"B\", \"age\": 15, \"class\": \"Math\" }\n```\n\n**A MongoDB administrator performs the following query:**\n\n```javascript\ndb.students.find({ class: \"Math\", age: 14 }).explain(\"executionStats\")\n```\n\n**The output includes:**\n\n```json\n{\n  \"winningPlan\": {\n    \"stage\": \"FETCH\",\n    \"inputStage\": {\n      \"stage\": \"IXSCAN\",\n      \"keyPattern\": { \"class\": 1 },\n      \"indexName\": \"class_1\"\n    }\n  },\n  \"executionStats\": {\n    \"nReturned\": 1,\n    \"totalKeysExamined\": 3,\n    \"totalDocsExamined\": 3\n  }\n}\n```\n\nWhat action should the administrator take to further optimize the query?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Compare the values of `nReturned`, `totalDocsExamined`, and `totalKeysExamined`."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Compare the `stage` fields and confirm that it is not using an index."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Review the value of the `direction` field."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Observe the `indexFilterSet` value and the use of an index."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** `nReturned` (1) vs `totalDocsExamined` (3) reveals inefficiency. A well-optimized query has these values close to 1:1. Adding `age` to the index (e.g., `{ class: 1, age: 1 }`) would reduce unnecessary document fetches.\n\n**Option B is incorrect:** The output shows `IXSCAN`, confirming an index **is** being used.\n\n**Option C is incorrect:** The `direction` field (forward/backward) indicates traversal direction \u2014 it does not identify optimization opportunities here.\n\n**Option D is incorrect:** `indexFilterSet: false` just indicates no index filter was applied; it does not point to the optimization opportunity."
+      },
+      {
+            "id": 29,
+            "text": "**A department store maintains a `clothing` collection containing:**\n\n```javascript\n{ \"_id\": 1, \"item\": \"sweater\", \"sizes\": [\"XS\", \"S\", \"L\"] }\n{ \"_id\": 2, \"item\": \"t-shirt\", \"sizes\": [\"S\", \"M\", \"L\"] }\n{ \"_id\": 3, \"item\": \"vest\",    \"sizes\": [\"M\", \"L\", \"XL\", \"XXL\"] }\n```\n\n**An employee runs the following query to know which items come in size medium:**\n\n```javascript\ndb.clothing.find({ \"sizes\": \"M\" })\n```\n\nWhich index should improve performance for this query the MOST?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.clothing.createIndex({ sizes: 1 })`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`db.clothing.createIndex({ item: 1, sizes: 1 })`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`db.clothing.createIndex({ _id: 1, sizes: 1 })`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`db.clothing.createIndex({ item: -1 })`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "**Option A is correct:** A multikey index on the `sizes` array field directly supports this query with an `IXSCAN`.\n\n**Option B is incorrect:** `item` is not in the query filter; the leading field wastes the index prefix.\n\n**Option C is incorrect:** `_id` is already indexed and not part of this query; `sizes` at position 2 cannot be used as a prefix.\n\n**Option D is incorrect:** This indexes `item` only, which is not referenced in the query."
+      },
+      {
+            "id": 30,
+            "text": "**What is the purpose of the oplog?**",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "A rolling record of all queries ran on the databases"
+                  },
+                  {
+                        "id": "b",
+                        "text": "A rolling record of all operations that modify the data stored in your databases"
+                  },
+                  {
+                        "id": "c",
+                        "text": "A rolling record of all indexes stored in your databases"
+                  },
+                  {
+                        "id": "d",
+                        "text": "A rolling record of all operations and users stored in your databases"
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "**Option A is incorrect:** The oplog does not record queries \u2014 only write operations.\n\n**Option B is correct:** The oplog is a capped collection that records all data-modifying operations, used by secondaries to replicate changes from the primary.\n\n**Option C is incorrect:** Index definitions are stored in collection metadata, not the oplog.\n\n**Option D is incorrect:** The oplog records write operations only \u2014 not user definitions or queries."
+      }
+];
+
+    let answeredQuestions = {};
+
+    function formatText(rawText) {
+      let text = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      text = text.replace(/```(js|json|javascript|text|yaml)?\n([\s\S]*?)\n```/g, function(match, lang, code) {
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      return text;
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `qCard_${q.id}`;
+
+        const inputType = q.isMulti ? "checkbox" : "radio";
+        const inputName = `q_${q.id}`;
+        const badgeText = q.isMulti ? "Select all that apply" : "Select one";
+
+        let optionsHTML = "";
+        q.options.forEach(opt => {
+          optionsHTML += `
+            <li class="option-item" id="optContainer_${q.id}_${opt.id}">
+              <input type="${inputType}" name="${inputName}" value="${opt.id}" id="input_${q.id}_${opt.id}">
+              <label class="option-label" for="input_${q.id}_${opt.id}">
+                <strong>${opt.id.toUpperCase()}.</strong> ${formatText(opt.text)}
+              </label>
+            </li>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="question-header">
+            <div class="question-title">
+              Question ${index + 1}
+              <span class="badge">${badgeText}</span>
+            </div>
+            <button type="button" class="btn-submit-q" id="btnSubmit_${q.id}" onclick="submitQuestion(${q.id})">Submit Answer</button>
+          </div>
+          <div class="question-text">${formatText(q.text)}</div>
+          <ul class="options-list">
+            ${optionsHTML}
+          </ul>
+          <div class="explanation" id="exp_${q.id}">
+            <strong>Explanation:</strong> ${formatText(q.explanation)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateScoreBoard();
+    }
+
+    function submitQuestion(qId) {
+      const q = quizData.find(item => item.id === qId);
+      if (!q) return;
+
+      const inputName = `q_${q.id}`;
+      const selectedInputs = document.querySelectorAll(`input[name="${inputName}"]:checked`);
+      const userSelected = Array.from(selectedInputs).map(i => i.value);
+
+      if (userSelected.length === 0) {
+        if (!confirm("You haven't selected any option. Are you sure you want to submit?")) {
+          return;
+        }
+      }
+
+      const correctAnswers = q.answer;
+      const isCorrect = userSelected.length === correctAnswers.length &&
+        userSelected.every(val => correctAnswers.includes(val));
+
+      answeredQuestions[q.id] = { isCorrect, userSelected };
+
+      const card = document.getElementById(`qCard_${q.id}`);
+      card.classList.add("q-submitted");
+
+      q.options.forEach(opt => {
+        const optElement = document.getElementById(`optContainer_${q.id}_${opt.id}`);
+        const isRightAnswer = correctAnswers.includes(opt.id);
+        const isSelected = userSelected.includes(opt.id);
+
+        if (isRightAnswer) {
+          optElement.classList.add("correct-answer");
+        } else if (isSelected && !isRightAnswer) {
+          optElement.classList.add("wrong-selected");
+        }
+      });
+
+      const qInputs = document.querySelectorAll(`input[name="${inputName}"]`);
+      qInputs.forEach(i => i.disabled = true);
+      document.getElementById(`btnSubmit_${q.id}`).disabled = true;
+
+      updateScoreBoard();
+    }
+
+    function submitAll() {
+      quizData.forEach(q => {
+        if (!answeredQuestions[q.id]) {
+          submitQuestion(q.id);
+        }
+      });
+    }
+
+    function updateScoreBoard() {
+      const answeredCount = Object.keys(answeredQuestions).length;
+      let correctCount = 0;
+
+      for (let qId in answeredQuestions) {
+        if (answeredQuestions[qId].isCorrect) {
+          correctCount++;
+        }
+      }
+
+      document.getElementById("correctCount").innerText = correctCount;
+      document.getElementById("answeredCount").innerText = answeredCount;
+      document.getElementById("totalCount").innerText = quizData.length;
+    }
+
+    function resetQuiz() {
+      answeredQuestions = {};
+      document.body.classList.remove("submitted");
+
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>

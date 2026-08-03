@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Practice Quiz — Set 4</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      max-width: 1300px;
+      width: 94%;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #13aa52;
+    }
+    .score-box {
+      background: #e9f7ef;
+      border: 2px solid #13aa52;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: normal;
+      background: #eee;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .question-text {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+    }
+    code {
+      background: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+    .option-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .option-item:hover {
+      background-color: #f5f5f5;
+    }
+    .option-item input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    .option-label {
+      flex: 1;
+    }
+    /* Feedback styling */
+    .option-item.correct-answer {
+      background-color: #d4edda !important;
+      border-color: #c3e6cb !important;
+      color: #155724 !important;
+      font-weight: bold;
+    }
+    .option-item.wrong-selected {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid #13aa52;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .q-submitted .explanation {
+      display: block;
+    }
+    .btn-submit-q {
+      background-color: #13aa52;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-submit-q:hover {
+      background-color: #118f45;
+    }
+    .btn-submit-q:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .actions-bar {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-main {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn-main:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MongoDB DBA Practice Quiz — Set 4</h1>
+  <div id="scoreBox" class="score-box">
+    Score: <span id="correctCount">0</span> / <span id="answeredCount">0</span> Answered &nbsp;|&nbsp; Total Questions: <span id="totalCount">30</span>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="actions-bar">
+    <button type="button" class="btn-main" onclick="submitAll()">Submit All Remaining</button>
+    <button type="button" class="btn-main" style="background-color:#6c757d;" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        text: "An `orders` collection stores a `status` field holding values such as `\"placed\"`, `\"shipped\"`, `\"delivered\"`, `\"cancelled\"`, and `\"refunded\"`. A reporting query must return every order that is **not** cancelled and **not** refunded.\n\nWhich query document should be used?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "{ status: { $nin: [\"cancelled\", \"refunded\"] } }" },
+          { id: "b", text: "{ status: { $in: [\"cancelled\", \"refunded\"] } }" },
+          { id: "c", text: "{ status: { $ne: [\"cancelled\", \"refunded\"] } }" },
+          { id: "d", text: "{ status: { $not: [\"cancelled\", \"refunded\"] } }" }
+        ],
+        answer: ["a"],
+        explanation: "$nin selects documents whose field value matches none of the values in the array."
+      },
+      {
+        id: 2,
+        text: "A `podcasts` collection contains a document with a `hosts` array holding two names. An administrator must add a third name to that array while keeping the two existing entries.\n\nWhich update document accomplishes this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "{ $set: { hosts: \"Priya Nair\" } }" },
+          { id: "b", text: "{ $push: { hosts: \"Priya Nair\" } }" },
+          { id: "c", text: "{ $upsert: { hosts: \"Priya Nair\" } }" },
+          { id: "d", text: "{ $insert: { hosts: \"Priya Nair\" } }" }
+        ],
+        answer: ["b"],
+        explanation: "$push appends a value to an existing array field."
+      },
+      {
+        id: 3,
+        text: "A `sales` collection stores documents with a `customer` subdocument containing an integer `age` field. An administrator must return every sale made to a customer aged 65 or older.\n\nWhich query documents return the correct result set?",
+        isMulti: true,
+        options: [
+          { id: "a", text: "{ \"customer.age\": { $gte: 65 } }" },
+          { id: "b", text: "{ \"customer.age\": { $gt: 64 } }" },
+          { id: "c", text: "{ customer.age: { $gte: 65 } }" },
+          { id: "d", text: "{ \"customer.age\": { $lte: 65 } }" }
+        ],
+        answer: ["a", "b"],
+        explanation: "Because age is an integer, $gte: 65 and $gt: 64 select the same documents. Option c is invalid syntax (unquoted dotted field path)."
+      },
+      {
+        id: 4,
+        text: "A payments team is designing a `transactions` collection and needs to store monetary amounts. Rounding errors of even a fraction of a unit are unacceptable, because the values are summed across millions of records for reconciliation.\n\nWhich BSON type should be used for the amount field?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "double, because it is BSON's standard floating-point type" },
+          { id: "b", text: "decimal128, because it provides exact decimal representation" },
+          { id: "c", text: "32-bit integer, because integers cannot lose precision" },
+          { id: "d", text: "string, because textual values are never subject to arithmetic rounding" }
+        ],
+        answer: ["b"],
+        explanation: "decimal128 is BSON's 128-bit decimal type, representing decimal values exactly without floating-point rounding error."
+      },
+      {
+        id: 5,
+        text: "A team is deciding whether to embed a customer's shipping address inside the customer document or to store addresses in a separate collection and reference them. Each customer has exactly one shipping address, and the application always reads the address together with the customer record.\n\nWhat is the primary advantage of embedding here?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "It avoids duplicating the address data across multiple collections." },
+          { id: "b", text: "It retrieves the customer and the address in a single document read, with no application-side join." },
+          { id: "c", text: "It guarantees the customer document will stay under the 16 MB BSON limit." },
+          { id: "d", text: "It allows the address fields to be indexed, which is not possible for referenced documents." }
+        ],
+        answer: ["b"],
+        explanation: "Embedding returns both customer and address in a single document read without application-side joins."
+      },
+      {
+        id: 6,
+        text: "A database administrator wants Atlas to identify schema design problems in a collection — such as unbounded arrays or excessive indexes — along with guidance on resolving them.\n\nWhich part of the Atlas interface provides this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The Indexes tab in Data Explorer" },
+          { id: "b", text: "The Schema Anti-Patterns tab in Data Explorer" },
+          { id: "c", text: "The Find tab in Data Explorer" },
+          { id: "d", text: "The Real-Time Performance Panel" }
+        ],
+        answer: ["b"],
+        explanation: "The Schema Anti-Patterns tab in Data Explorer flags schema design problems and provides resolution guidance."
+      },
+      {
+        id: 7,
+        text: "An administrator wants `mongosh` to open Vim whenever the `edit` command is used, for the current session.\n\nWhich command sets this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "config.get(\"editor\", \"vim\")" },
+          { id: "b", text: "config.set(\"editor\", \"vim\")" },
+          { id: "c", text: "db.config.set(\"editor\", \"vim\")" },
+          { id: "d", text: "config.apply({ editor: \"vim\" })" }
+        ],
+        answer: ["b"],
+        explanation: "`config.set(<option>, <value>)` sets a mongosh configuration option for the current session/user."
+      },
+      {
+        id: 8,
+        text: "An administrator on a Linux workstation wants `mongosh` to display 50 documents per batch when using the `it` iterator, and wants that setting to persist across every future shell session for all users on the host.\n\nWhat should the administrator do?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Add displayBatchSize: 50 under a mongosh: key in /etc/mongosh.conf, in YAML format." },
+          { id: "b", text: "Run config.set('displayBatchSize', 50) once, which writes the value to the server." },
+          { id: "c", text: "Add displayBatchSize=50 to ~/.mongoshrc.js." },
+          { id: "d", text: "Pass --displayBatchSize 50 to mongosh; there is no persistent setting for this option." }
+        ],
+        answer: ["a"],
+        explanation: "System-wide persistent settings for mongosh live in /etc/mongosh.conf in YAML format under a top-level mongosh: key."
+      },
+      {
+        id: 9,
+        text: "A sharded `orders` collection uses the compound shard key `{ storeId: 1, orderDate: 1 }`. A database administrator is reviewing which application queries can be routed to a single shard rather than broadcast to all of them.\n\nWhich query can `mongos` route without contacting every shard?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "A query filtering on orderDate only" },
+          { id: "b", text: "A query filtering on storeId" },
+          { id: "c", text: "A query filtering on customerEmail only" },
+          { id: "d", text: "A query with no filter, sorted by orderDate" }
+        ],
+        answer: ["b"],
+        explanation: "storeId is the leading prefix of the compound shard key { storeId: 1, orderDate: 1 }, allowing mongos to target specific shard(s)."
+      },
+      {
+        id: 10,
+        text: "A `telemetry` collection receives a very high volume of inserts. Over time the team has created twelve indexes on it to support various reports. Insert throughput has degraded noticeably, although read queries are fast.\n\nWhat explains the degradation?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Indexes are rebuilt from scratch on every insert once a collection exceeds ten indexes." },
+          { id: "b", text: "Every write operation must update all affected indexes, so each additional index adds write cost." },
+          { id: "c", text: "Indexes are stored in the same B-tree as the documents, so inserts must rebalance the collection." },
+          { id: "d", text: "MongoDB serialises inserts while any index exists, so throughput is independent of the number of indexes." }
+        ],
+        answer: ["b"],
+        explanation: "Every write operation must update all affected indexes, adding write latency and overhead for each index."
+      },
+      {
+        id: 11,
+        text: "An administrator wants to remove every user-defined index from a `staging` collection before reloading it, and runs `db.staging.dropIndexes()`.\n\nWhat is the result?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "All indexes are dropped, including the index on _id, which is recreated when the next document is inserted." },
+          { id: "b", text: "All indexes are dropped except the default index on _id, which cannot be dropped." },
+          { id: "c", text: "The command fails, because dropIndexes() requires an array of index names." },
+          { id: "d", text: "All indexes are hidden from the query planner but remain on disk until the collection is dropped." }
+        ],
+        answer: ["b"],
+        explanation: "dropIndexes() drops all user-defined indexes except the default _id index."
+      },
+      {
+        id: 12,
+        text: "A `products` collection has a sparse index created as `db.products.createIndex({ discount: 1 }, { sparse: true })`. Roughly 10% of products carry a `discount` field. An administrator runs a query that returns **all** products sorted by `discount`, and the plan shows a collection scan with an in-memory sort.\n\nWhy did the query planner decline to use the sparse index?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Sparse indexes cannot support sort operations, only equality matches." },
+          { id: "b", text: "Using the sparse index would omit the documents that have no discount field, producing an incomplete result set." },
+          { id: "c", text: "The index must be rebuilt with partialFilterExpression before the planner will consider it for a sort." },
+          { id: "d", text: "Sparse indexes are only considered when the queried field is also the collection's shard key." }
+        ],
+        answer: ["b"],
+        explanation: "The query planner avoids sparse indexes when a query must return all documents (including those without the indexed field), to avoid returning incomplete results."
+      },
+      {
+        id: 13,
+        text: "A team creates a clustered collection and specifies `expireAfterSeconds` in the clustered index definition.\n\nWhat does this accomplish?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "It causes MongoDB to remove expired documents automatically, without requiring a separate TTL index." },
+          { id: "b", text: "It limits how long the clustered index is retained in the WiredTiger cache." },
+          { id: "c", text: "It sets the maximum age of an index entry before the index is rebuilt." },
+          { id: "d", text: "It converts the collection to a capped collection with a time-based size limit." }
+        ],
+        answer: ["a"],
+        explanation: "Specifying expireAfterSeconds in a clustered index enables automatic document expiry without a separate TTL index."
+      },
+      {
+        id: 14,
+        text: "A database administrator is connected to a self-managed `mongod` instance with `mongosh` but does not have shell access to the host filesystem, so cannot read `mongod.log` directly. The administrator needs to see the most recent log messages the server has produced.\n\nWhat should the administrator run?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "show log global" },
+          { id: "b", text: "db.adminCommand({ logRotate: 1 })" },
+          { id: "c", text: "db.setLogLevel(1)" },
+          { id: "d", text: "db.currentOp()" }
+        ],
+        answer: ["a"],
+        explanation: "`show log global` (or `db.adminCommand({ getLog: 'global' })`) displays recent log messages from the server's in-memory log cache."
+      },
+      {
+        id: 15,
+        text: "A new team member must be able to download `mongod` logs from an Atlas M20 cluster, and nothing more.\n\nWhich is the minimum Atlas role that grants this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Organization Read Only" },
+          { id: "b", text: "Project Read Only" },
+          { id: "c", text: "Project Data Access Read Only" },
+          { id: "d", text: "Organization Member" }
+        ],
+        answer: ["c"],
+        explanation: "Project Data Access Read Only (GROUP_DATA_ACCESS_READ_ONLY) is the minimum Atlas role that permits downloading process logs."
+      },
+      {
+        id: 16,
+        text: "A database administrator is explaining replica set benefits to a new colleague and defines one term as: *the guarantee that data which has been committed will not be lost in the event of a system failure.*\n\nWhich term is being defined?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "High availability" },
+          { id: "b", text: "Data durability" },
+          { id: "c", text: "Data partitioning" },
+          { id: "d", text: "Reduced latency" }
+        ],
+        answer: ["b"],
+        explanation: "Data durability guarantees that committed data is preserved in the event of a system failure."
+      },
+      {
+        id: 17,
+        text: "The secondaries in a replica set lose network connectivity to the primary. After a period, they call an election and one of them becomes the new primary.\n\nWhat determines how long the secondaries wait before calling that election?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The configured election timeout, which is 10 seconds by default" },
+          { id: "b", text: "The oplog window reported by rs.printReplicationInfo()" },
+          { id: "c", text: "The wtimeout value on the most recent write operation" },
+          { id: "d", text: "The maxStalenessSeconds value in the clients' connection strings" }
+        ],
+        answer: ["a"],
+        explanation: "Secondaries wait for the election timeout (settings.electionTimeoutMillis, 10,000 ms default) before triggering an election."
+      },
+      {
+        id: 18,
+        text: "Several application teams connect to the same replica set. Rather than requiring every team to specify write and read guarantees in their own code, the database administrator wants to establish `\"majority\"` as the deployment-wide default for both.\n\nWhich command should the administrator run?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.adminCommand({ setDefaultRWConcern: 1, defaultReadConcern: { level: \"majority\" }, defaultWriteConcern: { w: \"majority\" } })" },
+          { id: "b", text: "rs.reconfig({ defaultReadConcern: \"majority\", defaultWriteConcern: \"majority\" })" },
+          { id: "c", text: "db.adminCommand({ setParameter: 1, writeConcern: \"majority\", readConcern: \"majority\" })" },
+          { id: "d", text: "Write and read concerns can only be set per operation; there is no deployment-wide default." }
+        ],
+        answer: ["a"],
+        explanation: "`setDefaultRWConcern` sets cluster-wide default read and write concerns for all operations that do not specify their own."
+      },
+      {
+        id: 19,
+        text: "To speed up a large one-time data migration, a developer configures the loader to write with `{ w: 0 }`.\n\nWhat risk does this introduce?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The writes are applied only to secondaries, and never reach the primary." },
+          { id: "b", text: "The client receives no acknowledgement that the writes succeeded, so failures can pass unnoticed, and the unthrottled write rate can push secondaries into replication lag." },
+          { id: "c", text: "The writes are held in the oplog but not applied until a write concern of at least 1 is used." },
+          { id: "d", text: "The writes are rejected, because w: 0 is not a valid write concern value." }
+        ],
+        answer: ["b"],
+        explanation: "w: 0 requests no acknowledgement, so write errors pass unnoticed and unthrottled writes can cause replication lag."
+      },
+      {
+        id: 20,
+        text: "A database administrator needs to see the rate at which inserts, queries, updates, deletes, and commands are being performed against a deployment, in order to correlate a performance change with a shift in workload.\n\nWhich metric provides this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Connections" },
+          { id: "b", text: "Opcounters" },
+          { id: "c", text: "Logical Size" },
+          { id: "d", text: "Tickets Available" }
+        ],
+        answer: ["b"],
+        explanation: "Opcounters tracks the rate of CRUD operations and commands performed on the database deployment."
+      },
+      {
+        id: 21,
+        text: "An engineer holds the `clusterAdmin` database role and attempts to configure a new alert condition for a specific host in an Atlas project. The option is unavailable.\n\nWhat does the engineer need?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The Project Owner role, which is required to configure alerts." },
+          { id: "b", text: "The dbAdminAnyDatabase role in addition to clusterAdmin." },
+          { id: "c", text: "An M10 or higher cluster, since alerts cannot be configured on smaller tiers." },
+          { id: "d", text: "The Atlas CLI, since host-level alerts cannot be configured in the UI." }
+        ],
+        answer: ["a"],
+        explanation: "Alert configuration is an Atlas control-plane project permission requiring the Project Owner role."
+      },
+      {
+        id: 22,
+        text: "An administrator has locked the database, created an LVM snapshot volume named `mdb-snapshot`, and unlocked the database. The next step is to produce a compressed `tar` archive of the snapshot's contents for off-host storage.\n\nWhat must happen before the `tar` archive can be created?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The snapshot volume must be mounted, typically read-only, so its filesystem contents are accessible." },
+          { id: "b", text: "The snapshot volume must be converted to a BSON archive with bsondump." },
+          { id: "c", text: "The mongod service must be stopped for the duration of the archiving." },
+          { id: "d", text: "The database must be locked again with db.fsyncLock() until the archive completes." }
+        ],
+        answer: ["a"],
+        explanation: "LVM snapshot block devices must be mounted (usually read-only) before filesystem archiving tools like tar can read them."
+      },
+      {
+        id: 23,
+        text: "A 2 TB dataset must be restored into a replica set inside a tight maintenance window. The team plans to build the indexes afterwards, during off-peak hours, to reduce load during the restore itself.\n\nWhich `mongorestore` option supports this plan?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "--drop" },
+          { id: "b", text: "--noIndexRestore" },
+          { id: "c", text: "--oplogReplay" },
+          { id: "d", text: "--nsExclude" }
+        ],
+        answer: ["b"],
+        explanation: "--noIndexRestore skips index creation during mongorestore, allowing indexes to be built separately later."
+      },
+      {
+        id: 24,
+        text: "Following a security incident, an organisation needs a record showing which users were connected at a given time and what configuration changes were made, so investigators can reconstruct events after the fact.\n\nWhich security practice provides this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Authentication" },
+          { id: "b", text: "Authorization" },
+          { id: "c", text: "Auditing" },
+          { id: "d", text: "Role-Based Access Control" }
+        ],
+        answer: ["c"],
+        explanation: "Auditing records database events (authentication, authorization changes, CRUD/admin actions) for post-incident investigation."
+      },
+      {
+        id: 25,
+        text: "A database administrator is planning an auditing configuration for a MongoDB Enterprise deployment.\n\nWhich statements about auditing are accurate?",
+        isMulti: true,
+        options: [
+          { id: "a", text: "Auditing can support the analysis of security incidents after they occur." },
+          { id: "b", text: "Auditing is often required to satisfy regulatory obligations." },
+          { id: "c", text: "Auditing improves database performance by reducing the work the server must repeat." },
+          { id: "d", text: "It is generally recommended to audit every read and write operation performed by every user." }
+        ],
+        answer: ["a", "b"],
+        explanation: "Auditing aids incident analysis and satisfies regulatory requirements. It degrades performance, so auditing every operation is discouraged."
+      },
+      {
+        id: 26,
+        text: "An administrator is enabling TLS on a self-managed deployment and proposes generating a self-signed certificate for each server rather than obtaining certificates from a certificate authority.\n\nWhat should the administrator understand about this approach?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "MongoDB rejects self-signed certificates, so TLS cannot be enabled at all." },
+          { id: "b", text: "MongoDB accepts self-signed certificates, but clients cannot validate the servers' identity, leaving the deployment exposed to man-in-the-middle attacks." },
+          { id: "c", text: "Self-signed certificates disable encryption while still requiring TLS handshakes, so traffic remains readable." },
+          { id: "d", text: "Self-signed certificates are equivalent to CA-issued certificates, because both use the same encryption algorithms." }
+        ],
+        answer: ["b"],
+        explanation: "Self-signed certificates enable encryption but do not validate server identity, creating vulnerability to MITM attacks."
+      },
+      {
+        id: 27,
+        text: "A development team wants to protect specific fields with Client-Side Field Level Encryption, but does not want to write application code that specifies which fields to encrypt and how on every read and write.\n\nWhich MongoDB capability addresses this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Automatic encryption, available in MongoDB Enterprise, which performs encrypted reads and writes without per-field application logic" },
+          { id: "b", text: "The Encrypted Storage Engine, which encrypts the named fields as they are written to disk" },
+          { id: "c", text: "TLS with requireTLS, which encrypts the fields in transit without application changes" },
+          { id: "d", text: "A partialFilterExpression on the index covering the sensitive fields" }
+        ],
+        answer: ["a"],
+        explanation: "Automatic encryption (MongoDB Enterprise / Atlas) handles CSFLE field encryption automatically based on a schema without explicit application encryption calls."
+      },
+      {
+        id: 28,
+        text: "An administrator needs a real-time view of a MongoDB deployment's insert, query, and command rates, refreshed every 5 seconds.\n\nWhich command is correct?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongostat -o='host,opcounters.insert.rate()=Insert Rate,opcounters.query.rate()=Query Rate,opcounters.command.rate()=Command Rate' \"<uri>\" 5" },
+          { id: "b", text: "mongostat -o='host,opcounters.insert.rate()=Insert Rate,opcounters.query.rate()=Query Rate,opcounters.command.rate()=Command Rate' \"<uri>\" 5000" },
+          { id: "c", text: "mongostat -stats='host,opcounters.insert.rate()=Insert Rate,opcounters.query.rate()=Query Rate' \"<uri>\" 5" },
+          { id: "d", text: "mongostatus -o='host,opcounters.insert.rate()=Insert Rate' \"<uri>\" 5" }
+        ],
+        answer: ["a"],
+        explanation: "mongostat accepts an interval in seconds as a positional argument (5) and uses -o for field selection/formatting."
+      },
+      {
+        id: 29,
+        text: "A `mongorestore` operation is failing on one `.bson` file from a dump directory. The administrator needs to inspect the file directly to see the data types and sizes of the documents it contains, in order to diagnose the failure.\n\nWhich command should the administrator use?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "bsondump --pretty accounts.bson" },
+          { id: "b", text: "bsondump --type=debug accounts.bson" },
+          { id: "c", text: "mongoexport --type=bson --collection=accounts" },
+          { id: "d", text: "mongofiles list accounts.bson" }
+        ],
+        answer: ["b"],
+        explanation: "bsondump --type=debug outputs document sizes and BSON data types for diagnosing BSON file issues."
+      },
+      {
+        id: 30,
+        text: "A `grades` database has a GridFS store containing many files. An administrator needs to list only the files whose names **begin with** `\"final\"`.\n\nWhich command should the administrator use?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongofiles -d=grades search final" },
+          { id: "b", text: "mongofiles -d=grades list final" },
+          { id: "c", text: "mongofiles -d=grades list --files=\"final\"" },
+          { id: "d", text: "mongofiles -d=grades get final" }
+        ],
+        answer: ["b"],
+        explanation: "mongofiles list <prefix> lists GridFS files starting with the prefix string, whereas search searches for substrings."
+      }
+    ];
+
+    // State tracking
+    let answeredQuestions = {}; // q.id -> { isCorrect: bool, userSelected: [] }
+
+    function formatText(rawText) {
+      let text = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      text = text.replace(/```(js|json|text)?\n([\s\S]*?)\n```/g, function(match, lang, code) {
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      return text;
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `qCard_${q.id}`;
+
+        const inputType = q.isMulti ? "checkbox" : "radio";
+        const inputName = `q_${q.id}`;
+        const badgeText = q.isMulti ? "Select all that apply" : "Select one";
+
+        let optionsHTML = "";
+        q.options.forEach(opt => {
+          optionsHTML += `
+            <li class="option-item" id="optContainer_${q.id}_${opt.id}">
+              <input type="${inputType}" name="${inputName}" value="${opt.id}" id="input_${q.id}_${opt.id}">
+              <label class="option-label" for="input_${q.id}_${opt.id}">
+                <strong>${opt.id.toUpperCase()}.</strong> ${formatText(opt.text)}
+              </label>
+            </li>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="question-header">
+            <div class="question-title">
+              Question ${index + 1}
+              <span class="badge">${badgeText}</span>
+            </div>
+            <button type="button" class="btn-submit-q" id="btnSubmit_${q.id}" onclick="submitQuestion(${q.id})">Submit Answer</button>
+          </div>
+          <div class="question-text">${formatText(q.text)}</div>
+          <ul class="options-list">
+            ${optionsHTML}
+          </ul>
+          <div class="explanation" id="exp_${q.id}">
+            <strong>Explanation:</strong> ${formatText(q.explanation)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateScoreBoard();
+    }
+
+    function submitQuestion(qId) {
+      const q = quizData.find(item => item.id === qId);
+      if (!q) return;
+
+      const inputName = `q_${q.id}`;
+      const selectedInputs = document.querySelectorAll(`input[name="${inputName}"]:checked`);
+      const userSelected = Array.from(selectedInputs).map(i => i.value);
+
+      if (userSelected.length === 0) {
+        if (!confirm("You haven't selected any option. Are you sure you want to submit?")) {
+          return;
+        }
+      }
+
+      const correctAnswers = q.answer;
+      const isCorrect = userSelected.length === correctAnswers.length &&
+        userSelected.every(val => correctAnswers.includes(val));
+
+      // Save state
+      answeredQuestions[q.id] = { isCorrect, userSelected };
+
+      // Add submitted class to card to reveal explanation
+      const card = document.getElementById(`qCard_${q.id}`);
+      card.classList.add("q-submitted");
+
+      // Highlight options for this question
+      q.options.forEach(opt => {
+        const optElement = document.getElementById(`optContainer_${q.id}_${opt.id}`);
+        const isRightAnswer = correctAnswers.includes(opt.id);
+        const isSelected = userSelected.includes(opt.id);
+
+        if (isRightAnswer) {
+          optElement.classList.add("correct-answer");
+        } else if (isSelected && !isRightAnswer) {
+          optElement.classList.add("wrong-selected");
+        }
+      });
+
+      // Disable inputs and button for this question
+      const qInputs = document.querySelectorAll(`input[name="${inputName}"]`);
+      qInputs.forEach(i => i.disabled = true);
+      document.getElementById(`btnSubmit_${q.id}`).disabled = true;
+
+      updateScoreBoard();
+    }
+
+    function submitAll() {
+      quizData.forEach(q => {
+        if (!answeredQuestions[q.id]) {
+          submitQuestion(q.id);
+        }
+      });
+    }
+
+    function updateScoreBoard() {
+      const answeredCount = Object.keys(answeredQuestions).length;
+      let correctCount = 0;
+
+      for (let qId in answeredQuestions) {
+        if (answeredQuestions[qId].isCorrect) {
+          correctCount++;
+        }
+      }
+
+      document.getElementById("correctCount").innerText = correctCount;
+      document.getElementById("answeredCount").innerText = answeredCount;
+      document.getElementById("totalCount").innerText = quizData.length;
+    }
+
+    function resetQuiz() {
+      answeredQuestions = {};
+      document.body.classList.remove("submitted");
+
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize quiz on load
+    renderQuiz();
+  </script>
+</body>
+</html>

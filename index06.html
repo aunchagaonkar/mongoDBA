@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Practice Quiz — Set 6</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      max-width: 1300px;
+      width: 94%;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #13aa52;
+    }
+    .score-box {
+      background: #e9f7ef;
+      border: 2px solid #13aa52;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: normal;
+      background: #eee;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .question-text {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+    }
+    code {
+      background: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+    .option-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .option-item:hover {
+      background-color: #f5f5f5;
+    }
+    .option-item input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    .option-label {
+      flex: 1;
+    }
+    /* Feedback styling */
+    .option-item.correct-answer {
+      background-color: #d4edda !important;
+      border-color: #c3e6cb !important;
+      color: #155724 !important;
+      font-weight: bold;
+    }
+    .option-item.wrong-selected {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid #13aa52;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .q-submitted .explanation {
+      display: block;
+    }
+    .btn-submit-q {
+      background-color: #13aa52;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-submit-q:hover {
+      background-color: #118f45;
+    }
+    .btn-submit-q:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .actions-bar {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-main {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn-main:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MongoDB DBA Practice Quiz — Set 6</h1>
+  <div id="scoreBox" class="score-box">
+    Score: <span id="correctCount">0</span> / <span id="answeredCount">0</span> Answered &nbsp;|&nbsp; Total Questions: <span id="totalCount">30</span>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="actions-bar">
+    <button type="button" class="btn-main" onclick="submitAll()">Submit All Remaining</button>
+    <button type="button" class="btn-main" style="background-color:#6c757d;" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+            "id": 1,
+            "text": "An administrator deploys a three-member replica set with the following in each `mongod.conf`:\n\n```yaml\nstorage:\n  dbPath: /var/lib/mongodb\nnet:\n  bindIp: 0.0.0.0\n  port: 27017\nreplication:\n  replSetName: replset\nsecurity:\n  authorization: enabled\n```\n\nClient authentication works, but replication never establishes and elections fail.\n\nWhat is missing from this configuration?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`security.keyFile`, which provides the internal authentication members need to verify each other"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`net.tls.mode`, which is mandatory whenever `authorization` is enabled"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`replication.oplogSizeMB`, without which members cannot exchange oplog entries"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`security.clusterAuthMode: scram`, which must be set explicitly for members to authenticate"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "When access control is enabled on a replica set, members must authenticate to **each other**, not just to clients. That internal authentication comes from a shared keyfile referenced by `security.keyFile` (or from x.509 certificates). Without it, members cannot verify each other's identity, so replication and elections fail while client authentication continues to work \u2014 exactly the split symptom described.\n\n- **b** TLS is a separate concern; access control does not require it.\n- **c** the oplog is created automatically with a default size.\n- **d** `clusterAuthMode` defaults to keyfile-based authentication and is not the missing piece; the keyfile itself is.\n\n*Units: Self-Managed Security \u2014 Enabling Authentication; Replication \u2014 Deploying a Replica Set*"
+      },
+      {
+            "id": 2,
+            "text": "An administrator adds the following to `mongod.conf` and restarts the service. `mongod` fails to start.\n\n```yaml\nnet:\n  port: 27017\n  tls:\n    mode: requireTLS\n```\n\nWhat is the cause?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`requireTLS` is not a valid mode value; the correct value is `required`."
+                  },
+                  {
+                        "id": "b",
+                        "text": "No `certificateKeyFile` is specified, so the server has no certificate to present."
+                  },
+                  {
+                        "id": "c",
+                        "text": "TLS cannot be enabled on port 27017; a dedicated TLS port must be configured."
+                  },
+                  {
+                        "id": "d",
+                        "text": "`mode` must be set to `preferTLS` first and can never be set to `requireTLS` directly in the configuration file."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "Any TLS mode other than `disabled` requires the server to present a certificate, supplied by `net.tls.certificateKeyFile`. Without it `mongod` has nothing to offer during the handshake and refuses to start. The startup failure is logged, which is where an administrator should look first.\n\n- **a** `requireTLS` is the correct value.\n- **c** MongoDB uses the same port for TLS and non-TLS connections.\n- **d** `requireTLS` can be set directly; `preferTLS` is a migration convenience, not a prerequisite.\n\n*Unit: Self-Managed Security \u2014 Enabling Network Encryption*"
+      },
+      {
+            "id": 3,
+            "text": "A user was created on the `admin` database with `readWrite` on `salesdb`. The application connects with:\n\n```text\nmongodb+srv://salesApp:<password>@cluster0.abcde.mongodb.net/salesdb?retryWrites=true&w=majority\n```\n\nThe credentials are confirmed correct, but the application receives `MongoServerError: bad auth : Authentication failed.`\n\nWhat should be changed?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Add `authSource=admin` to the connection string, because the driver is otherwise authenticating against `salesdb`."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Add the client's IP address to the Atlas Network Access allowlist."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Change `w=majority` to `w=1`, because majority write concern requires an elevated role."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Recreate the user on `salesdb` instead, because `readWrite` cannot be granted across databases."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "The database named in the connection string path is also the **authentication database** unless `authSource` says otherwise. Here the driver tries to authenticate `salesApp` against `salesdb`, where the user does not exist, so authentication fails despite correct credentials. Adding `authSource=admin` points authentication at the database where the user was created.\n\n- **b** would address a `MongoServerSelectionError`, not `bad auth`.\n- **c** write concern has no bearing on authentication.\n- **d** is false \u2014 a user on `admin` can hold roles scoped to any database, which is the standard pattern.\n\n*Units: Connecting to a MongoDB Database \u2014 Troubleshooting Connection Errors; Self-Managed Security \u2014 Establishing Authorization*"
+      },
+      {
+            "id": 4,
+            "text": "An administrator creates `/etc/mongosh.conf` with the following content, then opens a new shell. The batch size is still the default.\n\n```yaml\ndisplayBatchSize: 50\n```\n\nWhat is wrong?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The option belongs in `~/.mongoshrc.js`; `mongosh.conf` accepts only telemetry settings."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The options must be nested under a top-level `mongosh:` key."
+                  },
+                  {
+                        "id": "c",
+                        "text": "`displayBatchSize` must be written as `display_batch_size` in the configuration file."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The file must be JSON, not YAML."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`mongosh` configuration files are YAML with all options nested under a top-level `mongosh:` key. A bare key at the document root is ignored, which is why the shell silently keeps the default.\n\n```yaml\nmongosh:\n  displayBatchSize: 50\n```\n\n- **a** is wrong on both counts; `mongosh.conf` handles far more than telemetry.\n- **c** the option name is correct as written.\n- **d** the file is YAML.\n\n*Unit: The MongoDB Shell \u2014 Configuring the MongoDB Shell*"
+      },
+      {
+            "id": 5,
+            "text": "A query on an `invoices` collection filters on `region` with an equality match, filters on `amount` with a range, and sorts by `issuedAt` descending.\n\nWhich of the following indexes will still leave a blocking in-memory `SORT` stage in the plan?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`{ region: 1, issuedAt: -1, amount: 1 }`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`{ region: 1, amount: 1, issuedAt: -1 }`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`{ region: 1, issuedAt: -1 }`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`{ region: 1, issuedAt: -1, amount: -1 }`"
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "Apply ESR. The query has equality on `region`, a **sort** on `issuedAt`, and a **range** on `amount`. Option (b) places the range field before the sort field, which breaks the index's ability to return documents in `issuedAt` order \u2014 so a blocking `SORT` remains. Options (a) and (d) follow Equality \u2192 Sort \u2192 Range correctly. Option (c) omits `amount` entirely, so the range is applied as a post-scan filter, but the sort is still served by the index and no blocking sort occurs.\n\n*Unit: Indexes II \u2014 Optimized Compound Indexes*"
+      },
+      {
+            "id": 6,
+            "text": "A database administrator has two viable indexes on a collection and has confirmed with `explain(\"allPlansExecution\")` that the query planner is choosing the less selective one for a particular reporting query, producing a much higher key count than the alternative.\n\nWhat is the appropriate way to make that query use the better index?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Drop the index the planner is choosing, so only the better one remains."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Append `hint()` to the query, specifying the index to use."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Hide the less selective index with `hideIndex()` permanently."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Recreate the better index so it is the most recently built and therefore preferred."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`hint()` instructs MongoDB to use a specified index for a query, which is the targeted way to override a planner choice for one query without affecting anything else.\n\n- **a** drops an index other queries may depend on, to fix one query.\n- **c** hiding the index has the same collateral effect as dropping it for every other query, and permanently hiding an index you intend to keep is not the tool's purpose \u2014 it exists to test removal.\n- **d** build order does not influence plan selection.\n\n*Unit: Indexes II \u2014 Index Usage Details via Explain; Clustered Indexes (hint)*"
+      },
+      {
+            "id": 7,
+            "text": "`$indexStats` on an `accounts` collection reports the following for one index:\n\n```js\n{\n  name: \"email_1\",\n  key: { email: 1 },\n  accesses: { ops: Long(\"0\"), since: ISODate(\"2026-05-02T00:00:00Z\") },\n  spec: { unique: true }\n}\n```\n\nThe administrator is compiling a list of indexes to drop in order to reduce write overhead.\n\nHow should this index be treated?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Drop it \u2014 three months with zero operations is conclusive evidence it is unnecessary."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Do not drop it on usage alone: it is a unique index, so it is enforcing a constraint on writes even though no read operation has used it."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Drop it, then recreate it as a sparse index, which carries no write cost."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Hide it permanently, which removes the write overhead while preserving the constraint."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "A unique index does two jobs: it can serve queries, and it **enforces a constraint on every write**. `$indexStats` counts only the first. Zero read operations therefore proves the index is unused for queries while saying nothing about the constraint it is enforcing. Dropping it would silently permit duplicate email values.\n\n- **a** treats usage statistics as the whole picture, which is the trap.\n- **c** is false; a sparse index still carries write cost, and sparseness would also change which documents the constraint covers.\n- **d** is false; a hidden index is still maintained on every write and still enforces uniqueness, so hiding it saves nothing.\n\n*Units: Indexes II \u2014 How to Monitor Indexes; Indexes \u2014 Creating a Single Field Index*"
+      },
+      {
+            "id": 8,
+            "text": "The following entry appears in `mongod.log`:\n\n```json\n{\n  \"t\": { \"$date\": \"2026-07-28T11:02:44.310+00:00\" },\n  \"s\": \"I\",\n  \"c\": \"COMMAND\",\n  \"ctx\": \"conn4471\",\n  \"msg\": \"Slow query\",\n  \"attr\": {\n    \"ns\": \"shop.orders\",\n    \"planSummary\": \"COLLSCAN\",\n    \"keysExamined\": 0,\n    \"docsExamined\": 1840221,\n    \"nreturned\": 6,\n    \"durationMillis\": 3187\n  }\n}\n```\n\nWhat does this entry indicate, and what is the appropriate response?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The query is using a multikey index inefficiently; rebuild the index with a different key order."
+                  },
+                  {
+                        "id": "b",
+                        "text": "No index supports this query, so MongoDB examined 1.84 million documents to return six; run `explain()` and create a supporting index."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The `mongod` process is short of memory, since `keysExamined` is zero; increase the cache size."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The query is already covered, since `keysExamined` is zero; the duration reflects network transfer only."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`planSummary: \"COLLSCAN\"` with `keysExamined: 0` means no index was used at all. MongoDB read 1,840,221 documents to return 6, taking 3.2 seconds. The response is to run `explain()` on the query and build an index that supports its filter and sort.\n\n- **a** contradicts the plan summary; there is no index in use.\n- **c** misreads `keysExamined: 0`, which reflects the absence of an index scan, not memory pressure.\n- **d** inverts the meaning \u2014 a covered query shows `docsExamined: 0`, not `keysExamined: 0`.\n\n*Units: Logging Basics \u2014 MongoDB Log Events; Indexes II \u2014 Index Usage Details via Explain*"
+      },
+      {
+            "id": 9,
+            "text": "Immediately before a planned rolling maintenance window, `rs.status()` returns the following for one member:\n\n```js\n{\n  name: \"mongod2.replset.com:27017\",\n  health: 1,\n  state: 3,\n  stateStr: \"RECOVERING\"\n}\n```\n\nWhat should the administrator do?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Proceed \u2014 `health: 1` confirms the member is available, and `RECOVERING` members are upgraded the same way as secondaries."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Halt the maintenance until the member reaches `SECONDARY`, because performing maintenance while a member's state is unclear risks data corruption or loss."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Remove the member from the replica set, perform the maintenance on the remaining two, then re-add it."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Force the member to `SECONDARY` with `rs.reconfig()` and continue."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`RECOVERING` means the member is not currently able to serve reads and is working toward a consistent state. MongoDB's pre-maintenance guidance is explicit: no member should be in `ROLLBACK` or `RECOVERING`, because acting while a member's state is unresolved sharply raises the risk of corrupting or losing data. Wait for `SECONDARY`, and investigate why it is recovering.\n\n- **a** misreads `health: 1`, which reports reachability, not readiness.\n- **c** removing members is unnecessary and would reduce the set's fault tolerance during the very window when it is most needed.\n- **d** `rs.reconfig()` cannot force a member's state.\n\n*Units: Upgrades & Maintenance \u2014 MongoDB Server Upgrades; Replication \u2014 Configuring a Replica Set*"
+      },
+      {
+            "id": 10,
+            "text": "Pre-upgrade checks on a three-member replica set return the following feature compatibility versions:\n\n- `mongod0`: 5.0\n- `mongod1`: 5.0\n- `mongod2`: 4.4\n\nWhat should the administrator do before upgrading the deployment to 6.0?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Nothing \u2014 the upgrade sets all members to a common feature compatibility version automatically."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Investigate and align all members on the same feature compatibility version first, since a mismatch indicates the previous upgrade did not complete."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Upgrade `mongod2` to 6.0 first, which will bring its feature compatibility version forward two releases at once."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Set every member's feature compatibility version to 6.0 now, then upgrade the binaries."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "Every member should report the **same** feature compatibility version before an upgrade. A member sitting at 4.4 while the others are at 5.0 indicates the previous upgrade did not complete \u2014 most likely `setFeatureCompatibilityVersion` was never run, or was run while that member was unavailable. Resolve that before layering another upgrade on top.\n\n- **a** is false; FCV is never aligned automatically.\n- **c** is false; major versions must be installed consecutively, and FCV does not advance two releases at once.\n- **d** ignores the anomaly rather than investigating it, and setting FCV forward on a member whose history is unclear compounds the problem.\n\n*Unit: Upgrades & Maintenance \u2014 MongoDB Server Upgrades*"
+      },
+      {
+            "id": 11,
+            "text": "A junior administrator submits the following plan for upgrading a replica set from 5.0 to 6.0:\n\n1. Confirm oplog window and member states.\n2. Set `setFeatureCompatibilityVersion` to `\"6.0\"`.\n3. Gracefully shut down and upgrade each secondary in turn.\n4. Step down the primary and upgrade it.\n\nWhich step is out of order, and where does it belong?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Step 1 should come after step 3, since member states change during the upgrade."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Step 2 should come last, after every member is running the new binary."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Step 4 should come before step 3, so the primary runs the newest binary throughout."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The plan is correct as written."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`setFeatureCompatibilityVersion` is the **last** step, run only after every member is running the new binary. Raising it early enables features that persist data in a format the not-yet-upgraded members cannot read, and it also forecloses a straightforward downgrade if the upgrade goes badly.\n\n- **a** the pre-checks belong at the start; that is their purpose.\n- **c** the primary is upgraded last, by stepping down first so a writable primary remains available throughout.\n- **d** the plan is not correct as written.\n\n*Unit: Upgrades & Maintenance \u2014 MongoDB Server Upgrades*"
+      },
+      {
+            "id": 12,
+            "text": "A backup was produced with `mongodump --db=orders --out=/backups/nightly`. During a recovery drill, the administrator runs `mongorestore --oplogReplay /backups/nightly`.\n\nWhat happens?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The restore succeeds and applies the oplog entries captured during the dump."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The restore fails or has nothing to replay, because the dump was taken without `--oplog` and therefore contains no `oplog.bson`."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The restore succeeds but silently skips indexes, since `--oplogReplay` implies `--noIndexRestore`."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The restore replays the target deployment's current oplog, rolling it forward to the present moment."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`--oplogReplay` replays the `oplog.bson` file that `mongodump --oplog` produces. This dump was taken without `--oplog`, so there is no such file and there is nothing to replay \u2014 the restore has no point-in-time capability regardless of the flag used at restore time. Point-in-time consistency is decided when the **backup** is taken, not when it is restored.\n\n- **a** assumes an oplog that was never captured.\n- **c** invents an implication between unrelated options.\n- **d** is not what `--oplogReplay` does; it never reads the target's live oplog.\n\n*Units: Self-Managed Backup & Recovery \u2014 Backing Up and Restoring a Deployment; DBA Tools \u2014 Backup and Restore Tools*"
+      },
+      {
+            "id": 13,
+            "text": "An administrator documents the following snapshot procedure:\n\n1. `db.fsyncLock()`\n2. `lvcreate --size 100M --snapshot --name mdb-snap /dev/vg0/mongodb`\n3. Mount the snapshot read-only.\n4. `tar -czvf /backups/mdb.tar.gz /mnt/mdb-snap`\n5. Copy the archive to the backup host.\n\nWhat is the critical omission?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`db.fsyncUnlock()` is never run, so the deployment remains unable to accept writes after the procedure."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The snapshot should be created before the database is locked, so writes are captured."
+                  },
+                  {
+                        "id": "c",
+                        "text": "`bsondump` must be run on the snapshot before it can be archived."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The `mongod` service must be stopped between steps 1 and 2."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "`db.fsyncLock()` blocks writes and holds them blocked until `db.fsyncUnlock()` is called. The procedure locks the database in step 1 and never unlocks it, so the deployment stops accepting writes for the entire archive-and-copy operation \u2014 and stays that way afterwards. The unlock belongs immediately after the snapshot is created in step 2; the snapshot itself is instantaneous, so the write pause should last seconds, not the duration of the archiving.\n\n- **b** inverts the sequence; the lock exists to make the snapshot consistent.\n- **c** `bsondump` reads `.bson` dump files, not filesystem snapshots.\n- **d** stopping `mongod` defeats the purpose of snapshotting a running deployment.\n\n*Unit: Self-Managed Backup & Recovery \u2014 Snapshot Volumes; Filesystem Archives*"
+      },
+      {
+            "id": 14,
+            "text": "A team documents this plan for introducing TLS to a running replica set whose application servers currently connect without encryption:\n\n1. Obtain CA-issued certificates for each member.\n2. Set `net.tls.mode: requireTLS` and `certificateKeyFile` on each member, restarting them one at a time.\n3. Reconfigure the application servers to connect with TLS.\n\nWhich step creates an outage, and how should the plan change?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Step 1 \u2014 self-signed certificates should be used first and replaced with CA certificates later."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Step 2 \u2014 `requireTLS` rejects the applications' non-TLS connections immediately; use `preferTLS` during the transition and tighten to `requireTLS` after step 3."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Step 3 \u2014 the applications must be reconfigured before any member is restarted, then TLS enabled last."
+                  },
+                  {
+                        "id": "d",
+                        "text": "No step causes an outage, because MongoDB negotiates TLS per connection regardless of mode."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "`requireTLS` rejects every non-TLS connection the moment a member restarts with it, so the still-unconverted application servers are cut off \u2014 an immediate outage. `preferTLS` encrypts member-to-member traffic while continuing to accept both TLS and non-TLS client connections, which is what makes a staged migration possible. Tighten to `requireTLS` only after step 3 is complete and verified.\n\n- **a** self-signed certificates would weaken the deployment rather than help sequencing.\n- **c** applications cannot connect with TLS before the servers present certificates, so this ordering fails too.\n- **d** is false; the mode is a server-wide policy, not a per-connection negotiation.\n\n*Unit: Self-Managed Security \u2014 Enabling Network Encryption*"
+      },
+      {
+            "id": 15,
+            "text": "An administrator lists the ways to change the slow operation threshold on a self-managed deployment.\n\nWhich of the following is **not** a valid way to set `slowms`?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Passing it to `db.setProfilingLevel()` as an option"
+                  },
+                  {
+                        "id": "b",
+                        "text": "Setting `operationProfiling.slowOpThresholdMs` in the configuration file"
+                  },
+                  {
+                        "id": "c",
+                        "text": "Using `setParameter` to set `slowOpThresholdMs`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Passing it to `db.setLogLevel()` as an option"
+                  }
+            ],
+            "answer": [
+                  "d"
+            ],
+            "explanation": "`db.setLogLevel()` sets **log verbosity**, either globally or for a component. It takes no `slowms` option. The three valid mechanisms are `db.setProfilingLevel()`, the `operationProfiling.slowOpThresholdMs` configuration setting, and `setParameter`.\n\n*Unit: Logging Basics \u2014 MongoDB Server Log Customizations*"
+      },
+      {
+            "id": 16,
+            "text": "An Atlas alert reports that Query Targeting has exceeded its threshold on a production cluster.\n\nWhat is the appropriate **first** action?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Create indexes on the fields most commonly filtered in the application, based on the schema."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Identify the specific queries responsible, using Performance Advisor or the profiler, before changing any indexes."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Increase the cluster tier, since the ratio reflects insufficient hardware for the workload."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Raise the alert threshold, since Query Targeting fluctuates with normal traffic."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "Query Targeting tells you a problem exists; it does not tell you which queries cause it. Identifying the offending operations first \u2014 through Performance Advisor, the profiler, or the slow query log \u2014 is what makes the subsequent index the right one. Indexing from the schema alone risks adding indexes that carry write cost without addressing the actual workload.\n\n- **a** is the second step, not the first, and guessing produces over-indexing.\n- **c** treats a query problem as a capacity problem; a larger tier scans the same excess data faster and more expensively.\n- **d** suppresses the signal.\n\n*Units: Database Metrics & Monitoring \u2014 Core Metrics; Indexes II \u2014 How to Monitor Indexes*"
+      },
+      {
+            "id": 17,
+            "text": "The Connections metric on a production cluster has climbed steadily for a week and is now approaching the tier's limit, while the operation rate has stayed flat.\n\nWhat is the appropriate first step?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Restart the cluster to clear the accumulated connections."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Investigate which applications hold the connections and whether their driver connection pools are misconfigured or leaking, since a flat operation rate with rising connections suggests connections are not being released."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Upgrade the cluster tier immediately, since the connection limit is fixed per tier and cannot be influenced by the application."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Set `w: 0` on application writes to reduce the time each connection stays open."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "Connections rising while the operation rate stays flat is the signature of connections being opened and not released \u2014 a leak, or a pool configured to grow without a sensible ceiling. The diagnosis is to find which clients hold them, which the Real-Time Performance Panel and `currentOp` can show.\n\n- **a** clears the symptom temporarily and destroys the evidence, and the count will climb again.\n- **c** may eventually be warranted, but scaling around a leak means paying for it indefinitely; the premise that the application has no influence is also wrong.\n- **d** unacknowledged writes do not shorten connection lifetime and introduce a serious new risk.\n\n*Unit: Database Metrics & Monitoring \u2014 More Metrics; Command Line Metrics*"
+      },
+      {
+            "id": 18,
+            "text": "After an unplanned failover, `rs.status()` shows the former primary in state `ROLLBACK`.\n\nWhat has occurred?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The member is reverting writes it had accepted but which never reached a majority of members before it lost primary status."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The member is reapplying its entire oplog from the beginning as part of an initial sync."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The member has detected data file corruption and is restoring from the most recent checkpoint."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The member is rolling back a configuration change made with `rs.reconfig()`."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "`ROLLBACK` occurs when a member that had been primary accepted writes that never propagated to a majority, then lost primary status. On rejoining it must discard those writes to match the new primary's history. The preventive measure is `w: \"majority\"` \u2014 writes acknowledged under majority write concern are never rolled back, because a majority already holds them.\n\n- **b** describes initial sync, a different state (`STARTUP2`).\n- **c** describes recovery from a checkpoint, not rollback.\n- **d** replica set configuration changes are not rolled back through this state.\n\n*Unit: Replication \u2014 Automatic Failover and Elections; Read and Write Concerns*"
+      },
+      {
+            "id": 19,
+            "text": "A self-managed host running a replica set member raises a low disk space alert. The administrator considers four responses.\n\nWhich one resolves the immediate symptom but introduces a new operational risk?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Expanding the underlying storage volume"
+                  },
+                  {
+                        "id": "b",
+                        "text": "Archiving and removing historical data the application no longer queries"
+                  },
+                  {
+                        "id": "c",
+                        "text": "Reducing the configured oplog size to reclaim space"
+                  },
+                  {
+                        "id": "d",
+                        "text": "Rotating and compressing accumulated log files"
+                  }
+            ],
+            "answer": [
+                  "c"
+            ],
+            "explanation": "Shrinking the oplog does free disk space immediately, and it is the trap precisely because it works. The cost is a shorter oplog window: less time for a secondary to be offline before requiring a full initial sync, and a narrower margin for rolling maintenance. Expanding storage, archiving unqueried data, and rotating logs all resolve the symptom without weakening recovery.\n\n*Units: Replication \u2014 The MongoDB Operation Log; Database Metrics & Monitoring \u2014 Core Metrics*"
+      },
+      {
+            "id": 20,
+            "text": "A five-member replica set loses three members to a data centre failure. The application, which writes with `{ w: \"majority\" }`, begins failing all writes.\n\nWhy?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "A majority of the five voting members is unreachable, so no primary can be maintained and the deployment accepts no writes at all."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The two surviving members cannot satisfy `w: \"majority\"`, but writes would succeed if the write concern were lowered to `w: 1`."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The surviving members entered `ROLLBACK`, which blocks writes until they complete."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Write concern `\"majority\"` requires acknowledgement from all members, so any failure blocks writes."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "Elections need a majority of **voting members** \u2014 three of five here. With three members lost, the two survivors cannot form that majority, so no primary can be elected or sustained. Without a primary the deployment accepts no writes at all, whatever write concern the application requests.\n\n- **b** is the tempting near-miss: lowering write concern cannot help, because the problem is the absence of a primary rather than an unmet acknowledgement threshold.\n- **c** rollback is unrelated.\n- **d** misdefines `\"majority\"`, which is a calculated majority rather than all members.\n\n*Unit: Replication \u2014 Automatic Failover and Elections; Read and Write Concerns*"
+      },
+      {
+            "id": 21,
+            "text": "An application reads a document immediately after another process writes it, displays the value to a user, and then \u2014 following an unplanned failover moments later \u2014 finds the value is no longer present in the database.\n\nWhich setting would have prevented the application from reading that value in the first place?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`readPreference=primary`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`readConcern` level `\"majority\"`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`maxStalenessSeconds=90`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`w: \"majority\"` on the application's own writes"
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "The read used the default read concern, `\"local\"`, which returns the primary's most recent data whether or not a majority holds it. The write had not yet replicated when it was read, and the subsequent failover rolled it back \u2014 so the application displayed a value that never durably existed. Read concern `\"majority\"` would have withheld that value until it was majority-committed.\n\n- **a** the read almost certainly already came from the primary; that is where the problem originated.\n- **c** bounds secondary staleness and does nothing about un-replicated primary writes.\n- **d** `w: \"majority\"` on the *application's own* writes protects those writes, but the write here came from another process, and write concern cannot constrain what this read returns.\n\n*Unit: Replication \u2014 Read and Write Concerns*"
+      },
+      {
+            "id": 22,
+            "text": "A nightly job updates customer records with the following operation. It was expected to update one existing document per customer, but the collection has grown by several thousand documents overnight.\n\n```js\ndb.customers.updateOne(\n  { customerID: feed.customerId },\n  { $set: { lastSeen: new Date(), tier: feed.tier } },\n  { upsert: true }\n)\n```\n\nWhat is the most likely cause?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`updateOne()` with `upsert: true` always inserts a new document in addition to updating the matched one."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The filter field name does not match the stored field, so nothing matched and `upsert` inserted a new document for every record processed."
+                  },
+                  {
+                        "id": "c",
+                        "text": "`$set` cannot be combined with `upsert`, so MongoDB fell back to inserting."
+                  },
+                  {
+                        "id": "d",
+                        "text": "`new Date()` makes each update document unique, which forces an insert."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "With `upsert: true`, a filter that matches nothing causes an **insert**. If `customerID` does not match the stored field name \u2014 the collection uses `customer_id`, say, or the value type differs \u2014 then every record in the feed matches nothing and inserts a fresh document, which is precisely the growth described. Upsert converts a silent no-match into silent data creation, which is why the filter field deserves scrutiny.\n\n- **a** is false; upsert inserts only when nothing matched.\n- **c** is false; `$set` with `upsert` is the standard pattern.\n- **d** is false; fields in the update expression have no bearing on matching.\n\n*Unit: CRUD \u2014 Updating Documents with updateOne()*"
+      },
+      {
+            "id": 23,
+            "text": "A nightly `mongoimport` job loads a JSON file of complete product documents, each with its own `_id`. The job succeeded the first night and now fails every night with duplicate key errors on `_id`.\n\nWhat should be changed?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Add `--mode=upsert`, so records that already exist are replaced rather than inserted."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Add `--drop`, which is required for repeated imports."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Remove the `_id` field from the file so MongoDB generates new values."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Add `--jsonArray`, which permits duplicate keys."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "`mongoimport` defaults to `--mode=insert`, which fails when a document's `_id` already exists \u2014 hence success on the first night and failure on every night after. `--mode=upsert` replaces the matching document instead, which is correct here because the file contains complete documents. (Were the file to contain partial records, `merge` would be the right choice.)\n\n- **b** `--drop` is a `mongorestore` option, not a `mongoimport` one.\n- **c** discards the identifiers that make the records addressable and would create duplicates on every run.\n- **d** `--jsonArray` describes the input file's structure and has no effect on duplicate handling.\n\n*Unit: DBA Tools \u2014 Data Import Tools*"
+      },
+      {
+            "id": 24,
+            "text": "A `mongoexport` job feeds a downstream pipeline that must reconstruct each document's exact BSON types \u2014 distinguishing 32-bit integers from doubles, and dates from strings \u2014 when the data is loaded back into MongoDB.\n\nWhich option should be used?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`--jsonFormat=canonical`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`--jsonFormat=relaxed`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`--type=csv`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "`--pretty`"
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "Canonical JSON preserves BSON type information using extended JSON wrappers such as `$numberInt`, `$numberDouble`, and `$date`, so the original types can be reconstructed exactly. Relaxed mode \u2014 the default \u2014 renders values in a more readable form and loses some of that fidelity.\n\n- **c** CSV discards type information and nesting entirely.\n- **d** `--pretty` affects whitespace only.\n\n*Unit: DBA Tools \u2014 Data Export Tools*"
+      },
+      {
+            "id": 25,
+            "text": "A file named `2026-final-report.pdf` was uploaded to the GridFS store in the `archive` database. The administrator runs the following and gets no results:\n\n```bash\nmongofiles -d=archive list final\n```\n\nWhat explains this?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`list` matches filenames by prefix, and this filename begins with `2026-`; `search final` matches names containing the string."
+                  },
+                  {
+                        "id": "b",
+                        "text": "`mongofiles` cannot list PDF files, only text files."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The `-d` flag must name the collection, not the database."
+                  },
+                  {
+                        "id": "d",
+                        "text": "GridFS filenames are stored hashed, so they cannot be matched by name at all."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "`mongofiles list <prefix>` matches filenames that **begin with** the argument. `2026-final-report.pdf` starts with `2026-`, so `list final` matches nothing. `mongofiles -d=archive search final` matches names *containing* the string and would find it.\n\n- **b** GridFS is content-agnostic.\n- **c** `-d` names the database, which is correct as written.\n- **d** filenames are stored as-is in the files collection.\n\n*Unit: DBA Tools \u2014 MongoDB as a Filesystem (mongofiles)*"
+      },
+      {
+            "id": 26,
+            "text": "A `stores` collection contains documents of this shape, and the array grows with every transaction:\n\n```js\n{\n  _id: 4471,\n  storeName: \"Nashik Central\",\n  managerName: \"Rohit Kale\",\n  managerEmail: \"rohit.kale@example.com\",\n  transactions: [ /* one subdocument per sale, ~400 added per day */ ]\n}\n```\n\nWhich problem will force a change to this schema first?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "The duplication of manager details, which will eventually exceed the field limit per document."
+                  },
+                  {
+                        "id": "b",
+                        "text": "The unbounded `transactions` array, which grows without limit and will approach the 16 MB BSON document limit."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The use of an integer `_id`, which prevents MongoDB from generating ObjectId values."
+                  },
+                  {
+                        "id": "d",
+                        "text": "The mixture of scalar fields and an array in one document, which prevents indexing."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "The unbounded array is the hard constraint. At roughly 400 subdocuments a day it grows without limit, and MongoDB enforces a 16 MB maximum document size \u2014 so this schema eventually stops accepting writes altogether. Long before that it degrades write performance, because the whole document is rewritten on every append, and read performance, because the whole document must be loaded into memory. The fix is a separate `transactions` collection referencing the store.\n\n- **a** duplicated manager details are a real modeling concern, but no field limit exists of the kind described, and duplication does not produce a hard failure.\n- **c** is false; a user-supplied `_id` of any type is permitted.\n- **d** is false; documents routinely mix scalars and arrays, and arrays are indexed as multikey.\n\n*Unit: Data Modeling \u2014 Scaling a Data Model; Embedding Data in Documents*"
+      },
+      {
+            "id": 27,
+            "text": "A `films` collection embeds a `genres` array holding two or three genre names per film, drawn from a fixed list of about 40. A developer proposes moving genres into a separate collection and referencing them by `_id`, arguing that referencing is the more normalised design.\n\nHow should the database administrator assess this proposal?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Accept it \u2014 referencing is always preferable for many-to-many relationships in MongoDB."
+                  },
+                  {
+                        "id": "b",
+                        "text": "Reject it \u2014 the array is small and bounded, and the application reads genres with the film, so referencing would add a second query with no offsetting benefit."
+                  },
+                  {
+                        "id": "c",
+                        "text": "Accept it \u2014 embedding an array of any length violates MongoDB's data modeling principles."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Reject it \u2014 MongoDB cannot index fields in referenced collections, so genre queries would become collection scans."
+                  }
+            ],
+            "answer": [
+                  "b"
+            ],
+            "explanation": "The current design is already correct. Two or three genre names per film is a small, bounded array read together with the film, so embedding satisfies \"data accessed together is stored together\" and answers both access patterns \u2014 showing genres with a film, and finding films by genre \u2014 in a single query each. Referencing would add a second query for a handful of values and gain nothing.\n\n- **a** overgeneralises; the choice depends on array size, growth, and access pattern.\n- **c** is false; bounded arrays are the case embedding is *for*.\n- **d** is false \u2014 referenced collections are indexed normally. The proposal is unnecessary, not unworkable.\n\n*Units: Document Model \u2014 Embedding and Referencing; Data Modeling \u2014 Referencing Data in Documents*"
+      },
+      {
+            "id": 28,
+            "text": "A team is choosing a shard key for a `patients` collection of 40 million documents. One proposal is to shard on `bloodGroup`, which holds one of eight possible values.\n\nWhat is the problem with this choice?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Cardinality is too low: eight distinct values cannot be divided into enough chunks to distribute data evenly, so chunks grow oversized and cannot be split further."
+                  },
+                  {
+                        "id": "b",
+                        "text": "String fields cannot be used as shard keys; the key must be numeric or a date."
+                  },
+                  {
+                        "id": "c",
+                        "text": "The shard key must be unique across the collection, which `bloodGroup` is not."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Low-cardinality keys prevent the balancer from running, so no migrations would occur."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "A shard key needs high cardinality. Eight distinct values across 40 million documents means MongoDB cannot split the data into more than eight ranges, so each chunk becomes enormous, cannot be divided further, and cannot be balanced across shards. Distribution ends up dictated by the natural frequency of the eight blood groups rather than by the balancer.\n\n- **b** is false; strings are valid shard keys.\n- **c** is false; shard keys need not be unique.\n- **d** is false; the balancer still runs, but it has nothing it can usefully move.\n\n*Unit: sharding fundamentals (see docs on Choosing a Shard Key)*"
+      },
+      {
+            "id": 29,
+            "text": "A replica set has four data-bearing members plus one arbiter, giving five votes. Two of the data-bearing members have `priority: 0`. One of the electable members is currently primary; the other electable member and the arbiter are both reachable.\n\nCan this deployment elect a new primary if the current primary fails?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "Yes \u2014 the remaining four votes exceed the majority of three, and one reachable member has a priority above zero and is therefore electable."
+                  },
+                  {
+                        "id": "b",
+                        "text": "No \u2014 with two members set to `priority: 0`, fewer than a majority of members are electable."
+                  },
+                  {
+                        "id": "c",
+                        "text": "No \u2014 an arbiter cannot vote in an election that follows a primary failure."
+                  },
+                  {
+                        "id": "d",
+                        "text": "Yes, but only after the two `priority: 0` members are reconfigured, since MongoDB requires a majority of electable members."
+                  }
+            ],
+            "answer": [
+                  "a"
+            ],
+            "explanation": "Two things must both hold, and both do. The majority requirement is three of five votes; four members are reachable after the primary fails, so the votes are there \u2014 and `priority: 0` removes only *electability*, not the vote. Separately, at least one reachable member must be electable, and the second electable member is available. So an election succeeds.\n\n- **b** confuses electability with voting; MongoDB requires a majority of *votes*, not of electable members.\n- **c** is false; arbiters exist to vote in exactly this situation.\n- **d** invents a requirement.\n\n*Unit: Replication \u2014 Automatic Failover and Elections; Configuring a Replica Set*"
+      },
+      {
+            "id": 30,
+            "text": "A security review examines a monitoring service account whose stated requirement is: collect diagnostic metrics, and never read application data. The account holds these roles:\n\n```js\nroles: [\n  { role: \"clusterMonitor\", db: \"admin\" },\n  { role: \"read\", db: \"local\" },\n  { role: \"readAnyDatabase\", db: \"admin\" }\n]\n```\n\nWhich role violates the stated requirement and should be removed?",
+            "isMulti": false,
+            "options": [
+                  {
+                        "id": "a",
+                        "text": "`clusterMonitor` on `admin`"
+                  },
+                  {
+                        "id": "b",
+                        "text": "`read` on `local`"
+                  },
+                  {
+                        "id": "c",
+                        "text": "`readAnyDatabase` on `admin`"
+                  },
+                  {
+                        "id": "d",
+                        "text": "None; all three are required for metric collection"
+                  }
+            ],
+            "answer": [
+                  "c"
+            ],
+            "explanation": "`readAnyDatabase` grants read access to every database on the deployment, which directly contradicts the requirement that the account never read application data. It should be removed. The other two are the standard monitoring grants: `clusterMonitor` supplies diagnostic commands such as `serverStatus` and `replSetGetStatus`, and `read` on `local` is needed for replication metrics.\n\n*Units: Self-Managed Security \u2014 Establishing Authorization; Database Metrics & Monitoring \u2014 Self-Managed Monitoring*\n\n---\n\n## Coverage Map\n\n| Topic area | Questions | Count |\n|---|---|---|\n| Security: internal auth, TLS, roles | 1, 2, 14, 30 | 4 |\n| Connecting & shell configuration | 3, 4 | 2 |\n| Indexing, explain & index hygiene | 5, 6, 7, 8 | 4 |\n| Replication states & concerns | 9, 18, 20, 21, 29 | 5 |\n| Upgrades & maintenance | 10, 11 | 2 |\n| Backup & recovery | 12, 13 | 2 |\n| Logging | 15 | 1 |\n| Metrics & monitoring response | 16, 17, 19 | 3 |\n| CRUD diagnostics | 22 | 1 |\n| DBA tools | 23, 24, 25 | 3 |\n| Data modeling assessment | 26, 27 | 2 |\n| Sharded clusters | 28 | 1 |\n\n**Scoring guide:** applied questions are harder than recall questions, so calibrate differently \u2014 25+ = strong; 20\u201324 = solid; below 20 means the underlying facts are probably known but not yet automatic enough to apply under pressure.\n\n## What This Set Was Testing\n\nEach question maps to a fact covered in Sets 1\u20135, but asks something the earlier format did not:\n\n- **Configuration consequences.** Knowing that a keyfile provides internal authentication is one thing; recognising *client auth works but replication fails* as the symptom of its absence is another (Q1). Same for `certificateKeyFile` (Q2) and `authSource` (Q3).\n- **Sequencing.** The upgrade steps and the TLS rollout steps are individually familiar; the exam asks which one is in the wrong place (Q11, Q14).\n- **Metrics as evidence rather than facts.** Q17 gives you two metrics moving in opposite directions and asks what the *combination* means. Q19 asks which of four working solutions creates a new risk.\n- **When the obvious answer is wrong.** An unused index that enforces uniqueness should not be dropped (Q7). A well-modelled schema should not be \"improved\" (Q27). Lowering write concern cannot fix a missing primary (Q20).\n- **Silent failure modes.** Upsert with a mistyped filter field inserts instead of updating, with no error (Q22). A bare key in `mongosh.conf` is ignored, with no error (Q4). `list` versus `search` in `mongofiles` returns nothing rather than complaining (Q25).\n\n## Cumulative Coverage \u2014 All Six Sets\n\nYou now have 180 questions.\n\n| Topic area | S1 | S2 | S3 | S4 | S5 | S6 | Total |\n|---|---|---|---|---|---|---|---|\n| Indexing, explain & profiling | 9 | 7 | 4 | 4 | 4 | 4 | 32 |\n| Security | 5 | 5 | \u2014 | 4 | 4 | 4 | 22 |\n| Replication | 4 | 3 | 3 | 4 | 3 | 5 | 22 |\n| CRUD & query results | 3 | 4 | 4 | 3 | \u2014 | 1 | 15 |\n| Metrics & monitoring | 1 | 2 | 4 | 2 | 3 | 3 | 15 |\n| Backup & recovery | 2 | 2 | 2 | 2 | 3 | 2 | 13 |\n| Data modeling & document model | 2 | 1 | 4 | 3 | 1 | 2 | 13 |\n| DBA tools | 1 | 1 | 2 | 3 | 2 | 3 | 12 |\n| Logging | 1 | 2 | 2 | 2 | 2 | 1 | 10 |\n| Upgrades & maintenance | 1 | 2 | 1 | \u2014 | 3 | 2 | 9 |\n| Shell & connecting | \u2014 | \u2014 | 4 | 2 | \u2014 | 2 | 8 |\n| Sharded clusters | 1 | 1 | \u2014 | 1 | 1 | 1 | 5 |\n| Atlas platform | \u2014 | \u2014 | \u2014 | \u2014 | 4 | \u2014 | 4 |"
+      }
+];
+
+    // State tracking
+    let answeredQuestions = {}; // q.id -> { isCorrect: bool, userSelected: [] }
+
+    function formatText(rawText) {
+      let text = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      text = text.replace(/```(js|json|text|yaml)?\n([\s\S]*?)\n```/g, function(match, lang, code) {
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      return text;
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `qCard_${q.id}`;
+
+        const inputType = q.isMulti ? "checkbox" : "radio";
+        const inputName = `q_${q.id}`;
+        const badgeText = q.isMulti ? "Select all that apply" : "Select one";
+
+        let optionsHTML = "";
+        q.options.forEach(opt => {
+          optionsHTML += `
+            <li class="option-item" id="optContainer_${q.id}_${opt.id}">
+              <input type="${inputType}" name="${inputName}" value="${opt.id}" id="input_${q.id}_${opt.id}">
+              <label class="option-label" for="input_${q.id}_${opt.id}">
+                <strong>${opt.id.toUpperCase()}.</strong> ${formatText(opt.text)}
+              </label>
+            </li>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="question-header">
+            <div class="question-title">
+              Question ${index + 1}
+              <span class="badge">${badgeText}</span>
+            </div>
+            <button type="button" class="btn-submit-q" id="btnSubmit_${q.id}" onclick="submitQuestion(${q.id})">Submit Answer</button>
+          </div>
+          <div class="question-text">${formatText(q.text)}</div>
+          <ul class="options-list">
+            ${optionsHTML}
+          </ul>
+          <div class="explanation" id="exp_${q.id}">
+            <strong>Explanation:</strong> ${formatText(q.explanation)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateScoreBoard();
+    }
+
+    function submitQuestion(qId) {
+      const q = quizData.find(item => item.id === qId);
+      if (!q) return;
+
+      const inputName = `q_${q.id}`;
+      const selectedInputs = document.querySelectorAll(`input[name="${inputName}"]:checked`);
+      const userSelected = Array.from(selectedInputs).map(i => i.value);
+
+      if (userSelected.length === 0) {
+        if (!confirm("You haven't selected any option. Are you sure you want to submit?")) {
+          return;
+        }
+      }
+
+      const correctAnswers = q.answer;
+      const isCorrect = userSelected.length === correctAnswers.length &&
+        userSelected.every(val => correctAnswers.includes(val));
+
+      // Save state
+      answeredQuestions[q.id] = { isCorrect, userSelected };
+
+      // Add submitted class to card to reveal explanation
+      const card = document.getElementById(`qCard_${q.id}`);
+      card.classList.add("q-submitted");
+
+      // Highlight options for this question
+      q.options.forEach(opt => {
+        const optElement = document.getElementById(`optContainer_${q.id}_${opt.id}`);
+        const isRightAnswer = correctAnswers.includes(opt.id);
+        const isSelected = userSelected.includes(opt.id);
+
+        if (isRightAnswer) {
+          optElement.classList.add("correct-answer");
+        } else if (isSelected && !isRightAnswer) {
+          optElement.classList.add("wrong-selected");
+        }
+      });
+
+      // Disable inputs and button for this question
+      const qInputs = document.querySelectorAll(`input[name="${inputName}"]`);
+      qInputs.forEach(i => i.disabled = true);
+      document.getElementById(`btnSubmit_${q.id}`).disabled = true;
+
+      updateScoreBoard();
+    }
+
+    function submitAll() {
+      quizData.forEach(q => {
+        if (!answeredQuestions[q.id]) {
+          submitQuestion(q.id);
+        }
+      });
+    }
+
+    function updateScoreBoard() {
+      const answeredCount = Object.keys(answeredQuestions).length;
+      let correctCount = 0;
+
+      for (let qId in answeredQuestions) {
+        if (answeredQuestions[qId].isCorrect) {
+          correctCount++;
+        }
+      }
+
+      document.getElementById("correctCount").innerText = correctCount;
+      document.getElementById("answeredCount").innerText = answeredCount;
+      document.getElementById("totalCount").innerText = quizData.length;
+    }
+
+    function resetQuiz() {
+      answeredQuestions = {};
+      document.body.classList.remove("submitted");
+
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize quiz on load
+    renderQuiz();
+  </script>
+</body>
+</html>

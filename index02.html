@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Practice Quiz — Set 2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      max-width: 1300px;
+      width: 94%;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #13aa52;
+    }
+    .score-box {
+      background: #e9f7ef;
+      border: 2px solid #13aa52;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: normal;
+      background: #eee;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .question-text {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+    }
+    code {
+      background: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+    .option-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .option-item:hover {
+      background-color: #f5f5f5;
+    }
+    .option-item input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    .option-label {
+      flex: 1;
+    }
+    /* Feedback styling */
+    .option-item.correct-answer {
+      background-color: #d4edda !important;
+      border-color: #c3e6cb !important;
+      color: #155724 !important;
+      font-weight: bold;
+    }
+    .option-item.wrong-selected {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid #13aa52;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .q-submitted .explanation {
+      display: block;
+    }
+    .btn-submit-q {
+      background-color: #13aa52;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-submit-q:hover {
+      background-color: #118f45;
+    }
+    .btn-submit-q:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .actions-bar {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-main {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn-main:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MongoDB DBA Practice Quiz — Set 2</h1>
+  <div id="scoreBox" class="score-box">
+    Score: <span id="correctCount">0</span> / <span id="answeredCount">0</span> Answered &nbsp;|&nbsp; Total Questions: <span id="totalCount">30</span>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="actions-bar">
+    <button type="button" class="btn-main" onclick="submitAll()">Submit All Remaining</button>
+    <button type="button" class="btn-main" style="background-color:#6c757d;" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        text: "An inventory service stores one document per SKU in a `stock` collection. A nightly job runs the following operation for each SKU in a supplier feed. The SKU `\"BRK-7741\"` does not yet exist in the collection.\n\n```js\ndb.stock.updateOne(\n  { sku: \"BRK-7741\" },\n  { $set: { onHand: 40, updatedAt: new Date() } },\n  { upsert: true }\n)\n```\n\nWhat is the result of this operation?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The operation completes without modifying the collection, because no document matches the filter." },
+          { id: "b", text: "A new document is inserted containing `sku`, `onHand`, `updatedAt`, and a generated `_id`." },
+          { id: "c", text: "The operation fails, because `upsert` can be used only with `replaceOne()`." },
+          { id: "d", text: "A new document is inserted containing only `onHand` and `updatedAt`, because filter fields are not carried into an upsert." }
+        ],
+        answer: ["b"],
+        explanation: "With upsert: true and no matching document, MongoDB inserts a new document built from the equality conditions in the filter plus the fields in the update expression, and generates an _id."
+      },
+      {
+        id: 2,
+        text: "A `vendors` collection contains the following document:\n\n```js\n{\n  _id: ObjectId(\"64f1a2b3c4d5e6f708192a3b\"),\n  name: \"Nashik Metal Works\",\n  gstin: \"27AABCU9603R1ZM\",\n  category: \"fabrication\",\n  contact: { email: \"ops@nmw.example\", phone: \"555-0142\" }\n}\n```\n\nAn administrator runs:\n\n```js\ndb.vendors.replaceOne(\n  { _id: ObjectId(\"64f1a2b3c4d5e6f708192a3b\") },\n  { name: \"Nashik Metal Works Pvt Ltd\", category: \"fabrication\" }\n)\n```\n\nWhat is the state of the document after this operation?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "It contains `_id`, `name`, and `category` only; `gstin` and `contact` have been removed." },
+          { id: "b", text: "It contains all five original fields, with `name` updated to the new value." },
+          { id: "c", text: "The operation fails, because a replacement document must include every field present in the original." },
+          { id: "d", text: "It contains `_id`, `name`, and `category`, and `gstin` and `contact` are retained with null values." }
+        ],
+        answer: ["a"],
+        explanation: "replaceOne() substitutes the entire document with the replacement, preserving only _id. Any field absent from the replacement document is gone."
+      },
+      {
+        id: 3,
+        text: "A reporting query on an `employees` collection must return the `name` and `department` fields, must not return the `salary` field, and must not return `_id`. A developer runs:\n\n```js\ndb.employees.find({}, { name: 1, department: 1, salary: 0, _id: 0 })\n```\n\nThe command returns an error. What is the reason?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "A projection document cannot exclude a field that is not also present in the query filter." },
+          { id: "b", text: "`_id` must be excluded in a separate call to `cursor.project()`." },
+          { id: "c", text: "A projection cannot combine inclusion and exclusion of fields, with `_id` as the only exception." },
+          { id: "d", text: "Exclusions must be expressed as `false` rather than `0` when inclusions are also present." }
+        ],
+        answer: ["c"],
+        explanation: "A projection document may either include fields or exclude fields, not both — with _id as the sole exception."
+      },
+      {
+        id: 4,
+        text: "A `media` collection stores items where the `format` field holds a single string for some documents and an array of strings for others:\n\n```js\n{ _id: 1, title: \"Annual Report\",  format: \"pdf\" }\n{ _id: 2, title: \"Launch Deck\",    format: [\"pdf\", \"pptx\"] }\n{ _id: 3, title: \"Brand Guide\",    format: [\"indd\", \"pdf\"]\n```\n\nAn administrator runs `db.media.find({ format: \"pdf\" })`.\n\nWhich documents are returned?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Document 1 only, because equality matching does not traverse arrays." },
+          { id: "b", text: "Documents 2 and 3 only, because array fields require an array-aware operator to match a scalar." },
+          { id: "c", text: "Documents 1, 2, and 3, because equality matches both a scalar value and an array containing that value." },
+          { id: "d", text: "No documents, because the `format` field has an inconsistent type across the collection." }
+        ],
+        answer: ["c"],
+        explanation: "An equality match on a field whose value is an array succeeds when any element of the array equals the value, and also matches scalar fields."
+      },
+      {
+        id: 5,
+        text: "A legacy hospital system has been ported to MongoDB, producing a `patients` collection in which every field is flat...\n\nThe clinical team queries diagnosis and blood group constantly. The billing team queries address and phone numbers, and never needs clinical fields. Every field is in a one-to-one relationship with the patient.\n\nWhich restructuring best fits MongoDB's data modeling principles?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Keep one collection, but move every field into a single embedded `details` subdocument." },
+          { id: "b", text: "Split into a `patients` collection for clinical fields and a `patient_contacts` collection for address and phone fields, linked by a reference, with the phone numbers embedded as a subdocument." },
+          { id: "c", text: "Split into two collections that share no fields, so that neither team can read the other team's data." },
+          { id: "d", text: "Create one collection per field group in a separate database for each team." }
+        ],
+        answer: ["b"],
+        explanation: "Two collections separate the two access patterns, so each team reads only what it queries."
+      },
+      {
+        id: 6,
+        text: "A `deliveries` collection contains documents with two array fields, `stops` and `drivers`. An administrator attempts to create the index `db.deliveries.createIndex({ stops: 1, drivers: 1 })` and the command fails.\n\nWhat is the reason for the failure?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Multikey indexes cannot be compound; an array field may be indexed only as a single-field index." },
+          { id: "b", text: "A multikey index can contain at most one array field, so a compound index cannot index two arrays in parallel." },
+          { id: "c", text: "Array fields must be indexed with the `$**` wildcard syntax rather than by name." },
+          { id: "d", text: "Both array fields must be given the same sort direction for a compound multikey index to be valid." }
+        ],
+        answer: ["b"],
+        explanation: "MongoDB allows at most one array field per multikey index."
+      },
+      {
+        id: 7,
+        text: "A `subscribers` collection already contains 500,000 documents, and the `email` field currently holds duplicate values for a small number of documents. An administrator runs:\n\n```js\ndb.subscribers.createIndex({ email: 1 }, { unique: true })\n```\n\nWhat is the outcome?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The index is created, and the duplicate documents are dropped from the collection." },
+          { id: "b", text: "The index is created, and the existing duplicates are retained but not indexed." },
+          { id: "c", text: "The index creation fails, because MongoDB builds a unique index only when the field values contain no duplicates." },
+          { id: "d", text: "The index is created as a non-unique index, and MongoDB logs a warning." }
+        ],
+        answer: ["c"],
+        explanation: "MongoDB creates a unique index only if the indexed field values contain no duplicates."
+      },
+      {
+        id: 8,
+        text: "A `customers` collection has the compound index `{ active: 1, birthdate: -1, name: 1 }`. An administrator runs:\n\n```js\ndb.customers.find(\n  { active: true, birthdate: { $gte: ISODate(\"1977-01-01\") } },\n  { name: 1, birthdate: 1, _id: 0 }\n).sort({ birthdate: -1, name: 1 })\n```\n\nThe plan shows `IXSCAN` followed by `PROJECTION_COVERED`, with no `FETCH` stage.\n\nWhat does the absence of a `FETCH` stage indicate?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The query is covered: every field it needs is present in the index, so MongoDB never reads the documents from the collection." },
+          { id: "b", text: "The result set was served from the WiredTiger cache rather than from disk." },
+          { id: "c", text: "The projection was applied on the client side by the driver rather than on the server." },
+          { id: "d", text: "The query matched no documents, so there was nothing to fetch." }
+        ],
+        answer: ["a"],
+        explanation: "PROJECTION_COVERED with no FETCH means the query is covered."
+      },
+      {
+        id: 9,
+        text: "An `audit_events` collection has the compound index `{ tenantId: 1, status: 1, createdAt: 1 }`.\n\nWhich of the following queries can use this index?",
+        isMulti: true,
+        options: [
+          { id: "a", text: "A query filtering on `tenantId` only" },
+          { id: "b", text: "A query filtering on `tenantId` and `status`" },
+          { id: "c", text: "A query filtering on `status` and `createdAt` only" },
+          { id: "d", text: "A query filtering on `tenantId` and `createdAt`" }
+        ],
+        answer: ["a", "b", "d"],
+        explanation: "A compound index can serve any query that includes a prefix of its key pattern (tenantId, tenantId+status, tenantId+createdAt)."
+      },
+      {
+        id: 10,
+        text: "A `tickets` collection already has the index `{ status: 1, createdAt: -1 }`. A developer asks the database administrator to add `{ status: 1 }` as well, because many queries filter on `status` alone.\n\nHow should the administrator respond?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Add the index — a single-field index is always faster than a compound index for a single-field filter." },
+          { id: "b", text: "Decline — `status` is the prefix of the existing compound index, so those queries are already supported; the extra index would only add write and memory overhead." },
+          { id: "c", text: "Add the index, but mark it `sparse: true` to limit its size." },
+          { id: "d", text: "Decline — MongoDB rejects a new index whose key pattern is a prefix of an existing index." }
+        ],
+        answer: ["b"],
+        explanation: "status is the prefix of the existing compound index, so queries filtering on status alone already use that index."
+      },
+      {
+        id: 11,
+        text: "A database administrator is investigating why the query planner selected one index over another for a frequently run query, and wants to see the execution statistics MongoDB gathered for **every** candidate plan, including the plans that were rejected.\n\nWhich `explain()` verbosity mode should the administrator use?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "queryPlanner" },
+          { id: "b", text: "executionStats" },
+          { id: "c", text: "allPlansExecution" },
+          { id: "d", text: "rejectedPlans" }
+        ],
+        answer: ["c"],
+        explanation: "allPlansExecution runs the query and returns execution statistics for all candidate plans."
+      },
+      {
+        id: 12,
+        text: "A manufacturing team creates a time series collection to store readings from several thousand machines:\n\n```js\ndb.createCollection(\"readings\", {\n  timeseries: {\n    timeField: \"timestamp\",\n    metaField: \"machine\",\n    granularity: \"minutes\"\n  }\n})\n```\n\nWhat is the purpose of the `metaField` option?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "It identifies the field MongoDB uses to order documents chronologically within each bucket." },
+          { id: "b", text: "It holds metadata that identifies the source of the measurements, which MongoDB uses to group related measurements into the same bucket." },
+          { id: "c", text: "It specifies the field on which MongoDB automatically creates a TTL index for the collection." },
+          { id: "d", text: "It defines the maximum size of each bucket before a new bucket is created." }
+        ],
+        answer: ["b"],
+        explanation: "metaField names the field holding metadata that identifies the source of measurements to group related measurements into buckets."
+      },
+      {
+        id: 13,
+        text: "A database administrator is examining the following log entry from `mongod.log`:\n\n```json\n{\n  \"t\": { \"$date\": \"2026-07-14T04:22:11.088+00:00\" },\n  \"s\": \"I\",\n  \"c\": \"ACCESS\",\n  \"id\": 20250,\n  \"ctx\": \"conn1187\",\n  \"msg\": \"Authentication succeeded\",\n  \"attr\": { \"user\": \"reportsvc\", \"db\": \"admin\" }\n}\n```\n\nWhich field identifies the **component** of the server that issued this message?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The \"s\" field" },
+          { id: "b", text: "The \"c\" field" },
+          { id: "c", text: "The \"ctx\" field" },
+          { id: "d", text: "The \"id\" field" }
+        ],
+        answer: ["b"],
+        explanation: "The \"c\" field carries the component that produced the message (e.g. ACCESS, REPL, STORAGE)."
+      },
+      {
+        id: 14,
+        text: "A database administrator wants the Linux `logrotate` service to manage rotation of `mongod.log` on a self-managed host, rather than rotating logs manually from `mongosh`. The rotation must not lose log entries, and `mongod` must keep writing to the same file path after each rotation.\n\nWhich configuration supports this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Set systemLog.logRotate: reopen with systemLog.logAppend: true, and have the logrotate script send SIGUSR1 to mongod after rotating." },
+          { id: "b", text: "Set systemLog.logRotate: rename and have the logrotate script send SIGTERM to mongod after rotating." },
+          { id: "c", text: "Set systemLog.verbosity: 1 and have the logrotate script restart the mongod service after rotating." },
+          { id: "d", text: "Set systemLog.destination: syslog and configure retention in logrotate only." }
+        ],
+        answer: ["a"],
+        explanation: "reopen closes and reopens the log file at the same path after logrotate renames it. SIGUSR1 triggers reopen."
+      },
+      {
+        id: 15,
+        text: "A replica set consists of one primary and three data-bearing secondaries. The team cannot provision a fifth data-bearing host, but is concerned that the even number of voting members could prevent a primary from being elected.\n\nWhat should the administrator add, and what is its role?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "A hidden member, which replicates data but is invisible to applications." },
+          { id: "b", text: "A delayed member, which maintains a time-lagged copy of the data." },
+          { id: "c", text: "An arbiter, which holds no data but casts a vote to break ties in elections." },
+          { id: "d", text: "A second primary, which shares write traffic and votes independently." }
+        ],
+        answer: ["c"],
+        explanation: "An arbiter holds no data but casts a vote to break ties in elections, ensuring an odd number of voting members."
+      },
+      {
+        id: 16,
+        text: "A secondary in a replica set has been offline far longer than expected. When it restarts, it cannot resume replicating from where it stopped and instead performs a full initial sync.\n\nWhich characteristic of the oplog explains this behaviour?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The oplog is a capped collection, so once it reaches its size limit the oldest entries are overwritten — and the entries the secondary needed were among them." },
+          { id: "b", text: "The oplog is truncated automatically whenever a secondary is unreachable, to avoid unbounded growth." },
+          { id: "c", text: "The oplog stores only the most recent operation per document, so intermediate operations were lost." },
+          { id: "d", text: "The oplog is stored on the secondary rather than the primary, so it was cleared when the host was shut down." }
+        ],
+        answer: ["a"],
+        explanation: "The oplog is a capped collection (circular buffer). Overwritten entries force the secondary to do a full initial sync."
+      },
+      {
+        id: 17,
+        text: "A database administrator is investigating sustained replication lag on the secondaries of a self-managed replica set.\n\nWhich of the following are plausible causes?",
+        isMulti: true,
+        options: [
+          { id: "a", text: "Increased network latency between the primary and the secondaries" },
+          { id: "b", text: "Insufficient disk throughput on the secondaries relative to the primary" },
+          { id: "c", text: "A large bulk load performed with unacknowledged writes" },
+          { id: "d", text: "Enabling access control on the deployment" }
+        ],
+        answer: ["a", "b", "c"],
+        explanation: "Network latency, disk throughput, and bulk unacknowledged writes cause replication lag."
+      },
+      {
+        id: 18,
+        text: "An administrator suspects that the storage subsystem is the bottleneck on a MongoDB host and needs to determine whether disk operations are waiting to be serviced.\n\nWhich metric answers this question?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Swap Usage" },
+          { id: "b", text: "Disk Space Percent Free" },
+          { id: "c", text: "Disk Queue Depth" },
+          { id: "d", text: "Normalized System CPU" }
+        ],
+        answer: ["c"],
+        explanation: "Disk Queue Depth measures the average length of requests issued to the disk partition."
+      },
+      {
+        id: 19,
+        text: "A long-running aggregation is consuming resources on a production `mongod` instance and must be stopped. The administrator is connected with `mongosh`.\n\nWhich sequence identifies and terminates the operation?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Run db.runCommand({ serverStatus: 1 }) to find the operation, then db.adminCommand({ killOp: 1, op: <opid> })." },
+          { id: "b", text: "Run db.adminCommand({ currentOp: true, \"$all\": true }) to find the operation's opid, then db.adminCommand({ killOp: 1, op: <opid> })." },
+          { id: "c", text: "Run db.adminCommand({ currentOp: true }) to find the operation, then restart the mongod service to clear it." },
+          { id: "d", text: "Run db.collection.stats() to find the operation, then db.adminCommand({ killCursors: 1 })." }
+        ],
+        answer: ["b"],
+        explanation: "currentOp finds in-progress operations and opids; killOp terminates the operation by opid."
+      },
+      {
+        id: 20,
+        text: "An application team plans to upgrade the MongoDB Node.js driver from an old major version to the current release. The MongoDB server itself is not being changed.\n\nWhat should the team verify before performing the driver upgrade?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "That the oplog has been cleared so the driver can establish a fresh connection." },
+          { id: "b", text: "That the feature compatibility version has been raised to match the new driver." },
+          { id: "c", text: "That the new driver version is compatible with the deployment's MongoDB server version." },
+          { id: "d", text: "That each host server has been gracefully shut down before the driver package is replaced." }
+        ],
+        answer: ["c"],
+        explanation: "Driver and server versions have a documented compatibility matrix that should be verified first."
+      },
+      {
+        id: 21,
+        text: "A database administrator is planning a maintenance window for a replica set and is identifying which changes must be applied one member at a time.\n\nWhich of the following changes does NOT require rolling maintenance?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Upgrading the host operating system" },
+          { id: "b", text: "Creating a new database user" },
+          { id: "c", text: "Building a new index on a large collection" },
+          { id: "d", text: "Upgrading the MongoDB server version" }
+        ],
+        answer: ["b"],
+        explanation: "Creating a user is a single write to the admin database that replicates automatically."
+      },
+      {
+        id: 22,
+        text: "A team is enabling authentication on a self-managed deployment and wants to use MongoDB's default authentication mechanism, without provisioning any certificates or external directory services.\n\nWhich mechanism will they be using?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "x.509 certificate authentication" },
+          { id: "b", text: "LDAP proxy authentication" },
+          { id: "c", text: "SCRAM" },
+          { id: "d", text: "Kerberos" }
+        ],
+        answer: ["c"],
+        explanation: "SCRAM is MongoDB's default authentication mechanism."
+      },
+      {
+        id: 23,
+        text: "An administrator adds `security.authorization: enabled` to `mongod.conf` on a fresh self-managed deployment and restarts the service. The administrator now needs to provision users for three applications.\n\nWhat must be done first?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Create a user administrator, which the localhost exception permits before any other user exists." },
+          { id: "b", text: "Disable authorization temporarily so the application users can be created, then re-enable it." },
+          { id: "c", text: "Create the three application users first, then create an administrative user to manage them." },
+          { id: "d", text: "Add each application user to the local database, because the admin database is reserved until an administrator exists." }
+        ],
+        answer: ["a"],
+        explanation: "The localhost exception permits creating the first user (user administrator) on a fresh authorization-enabled deployment."
+      },
+      {
+        id: 24,
+        text: "A `hr` database contains a role named `payrollReader`. The role must be granted the `find` privilege on the `payslips` collection in that database.\n\nWhich command uses the correct syntax?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.runCommand({ grantPrivilegesToRole: \"payrollReader\", privileges: { resource: { db: \"hr\", collection: \"payslips\" }, actions: [ \"find\" ] } })" },
+          { id: "b", text: "db.runCommand({ grantPrivilegesToRole: \"payrollReader\", privileges: [ { resource: { db: \"hr\", collection: \"payslips\" }, actions: [ \"find\" ] } ] })" },
+          { id: "c", text: "db.runCommand({ grantPrivilegesToRole: \"payrollReader\", privileges: [ { db: \"hr\", collection: \"payslips\", actions: [ \"find\" ] } ] })" },
+          { id: "d", text: "db.runCommand({ grantPrivilegesToRole: \"payrollReader\", privileges: [ { resource: { db: \"hr\", collection: \"payslips\" }, actions: \"find\" } ] })" }
+        ],
+        answer: ["b"],
+        explanation: "privileges must be an array of privilege documents, with a resource object and an actions array."
+      },
+      {
+        id: 25,
+        text: "While deploying a three-member replica set, an administrator generates a file with `openssl rand -base64 756`, sets its permissions to `0400`, gives the `mongodb` user ownership, copies it to all three hosts, and references it from `security.keyFile` in each `mongod.conf`.\n\nWhat does this file provide?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The master key used by the Encrypted Storage Engine to encrypt data files on disk." },
+          { id: "b", text: "Internal authentication between the members of the replica set, so that each member can verify the others' identity." },
+          { id: "c", text: "The TLS certificate presented to clients when they connect over an encrypted channel." },
+          { id: "d", text: "The seed used to generate ObjectId values consistently across all members." }
+        ],
+        answer: ["b"],
+        explanation: "security.keyFile provides internal authentication among replica set members."
+      },
+      {
+        id: 26,
+        text: "An organization runs MongoDB Community Edition on its own servers and wants MongoDB to natively encrypt its data files on disk.\n\nWhat should the administrator tell the organization?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Encryption at rest is enabled by default in the WiredTiger storage engine and requires no configuration." },
+          { id: "b", text: "The Encrypted Storage Engine is a MongoDB Enterprise feature and is not available in Community Edition." },
+          { id: "c", text: "Encryption at rest is configured by setting net.tls.mode to requireTLS on each host." },
+          { id: "d", text: "Encryption at rest is available in Community Edition, but only for collections created after the feature is enabled." }
+        ],
+        answer: ["b"],
+        explanation: "The Encrypted Storage Engine is available only in MongoDB Enterprise and Atlas."
+      },
+      {
+        id: 27,
+        text: "A business states that if its order-processing database fails, the organization can accept losing no more than 15 minutes of committed transactions.\n\nWhich planning value has the business defined?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Recovery Point Objective (RPO)" },
+          { id: "b", text: "Recovery Time Objective (RTO)" },
+          { id: "c", text: "The oplog window" },
+          { id: "d", text: "The wtimeout value for majority writes" }
+        ],
+        answer: ["a"],
+        explanation: "Recovery Point Objective (RPO) is the maximum acceptable amount of data loss expressed as a time span."
+      },
+      {
+        id: 28,
+        text: "A `mongodump` backup was created in a `dump/` directory for an entire deployment. An administrator now needs to restore only the `grades` collection from the `sample_training` database.\n\nWhich command should the administrator use?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongorestore --db sample_training --collection grades dump/" },
+          { id: "b", text: "mongorestore --nsInclude=grades dump/" },
+          { id: "c", text: "mongorestore --nsInclude=sample_training.grades dump/" },
+          { id: "d", text: "mongorestore --nsExclude=sample_training.grades dump/" }
+        ],
+        answer: ["c"],
+        explanation: "mongorestore uses --nsInclude with fully qualified namespace database.collection."
+      },
+      {
+        id: 29,
+        text: "A nightly feed arrives as a JSON file containing partial records for a `products` collection. Each record in the file carries the `_id` and only the fields that changed. The import must apply those changed fields to the matching documents while leaving all other existing fields intact.\n\nWhich `mongoimport` mode should be used?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "--mode=insert" },
+          { id: "b", text: "--mode=upsert" },
+          { id: "c", text: "--mode=merge" },
+          { id: "d", text: "--mode=delete" }
+        ],
+        answer: ["c"],
+        explanation: "--mode=merge merges imported fields into matching existing documents without overwriting unlisted fields."
+      },
+      {
+        id: 30,
+        text: "A team is sharding an `events` collection. The candidate shard key is a monotonically increasing timestamp, and the workload is insert-heavy. The administrator recommends hashed sharding instead of ranged sharding on that field.\n\nWhat is the reason for this recommendation?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "With ranged sharding on a steadily increasing value, every new insert falls into the chunk holding the highest range, concentrating writes on one shard; hashing the key spreads inserts evenly." },
+          { id: "b", text: "Ranged sharding does not support date or timestamp values as shard keys." },
+          { id: "c", text: "Hashed sharding prevents the balancer from migrating chunks, which eliminates write contention." },
+          { id: "d", text: "Hashed sharding allows the shard key to be changed later, whereas ranged sharding does not." }
+        ],
+        answer: ["a"],
+        explanation: "Ranged sharding on monotonically increasing values causes hot-spotting on the highest chunk. Hashed sharding distributes inserts evenly."
+      }
+    ];
+
+    // State tracking
+    let answeredQuestions = {}; // q.id -> { isCorrect: bool, selected: [] }
+
+    function formatText(rawText) {
+      let text = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      text = text.replace(/```(js|json)?\n([\s\S]*?)\n```/g, function(match, lang, code) {
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      return text;
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `qCard_${q.id}`;
+
+        const inputType = q.isMulti ? "checkbox" : "radio";
+        const inputName = `q_${q.id}`;
+        const badgeText = q.isMulti ? "Select all that apply" : "Select one";
+
+        let optionsHTML = "";
+        q.options.forEach(opt => {
+          optionsHTML += `
+            <li class="option-item" id="optContainer_${q.id}_${opt.id}">
+              <input type="${inputType}" name="${inputName}" value="${opt.id}" id="input_${q.id}_${opt.id}">
+              <label class="option-label" for="input_${q.id}_${opt.id}">
+                <strong>${opt.id.toUpperCase()}.</strong> ${formatText(opt.text)}
+              </label>
+            </li>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="question-header">
+            <div class="question-title">
+              Question ${index + 1}
+              <span class="badge">${badgeText}</span>
+            </div>
+            <button type="button" class="btn-submit-q" id="btnSubmit_${q.id}" onclick="submitQuestion(${q.id})">Submit Answer</button>
+          </div>
+          <div class="question-text">${formatText(q.text)}</div>
+          <ul class="options-list">
+            ${optionsHTML}
+          </ul>
+          <div class="explanation" id="exp_${q.id}">
+            <strong>Explanation:</strong> ${formatText(q.explanation)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateScoreBoard();
+    }
+
+    function submitQuestion(qId) {
+      const q = quizData.find(item => item.id === qId);
+      if (!q) return;
+
+      const inputName = `q_${q.id}`;
+      const selectedInputs = document.querySelectorAll(`input[name="${inputName}"]:checked`);
+      const userSelected = Array.from(selectedInputs).map(i => i.value);
+
+      if (userSelected.length === 0) {
+        if (!confirm("You haven't selected any option. Are you sure you want to submit?")) {
+          return;
+        }
+      }
+
+      const correctAnswers = q.answer;
+      const isCorrect = userSelected.length === correctAnswers.length &&
+        userSelected.every(val => correctAnswers.includes(val));
+
+      // Save state
+      answeredQuestions[q.id] = { isCorrect, userSelected };
+
+      // Add submitted class to card to reveal explanation
+      const card = document.getElementById(`qCard_${q.id}`);
+      card.classList.add("q-submitted");
+
+      // Highlight options for this question
+      q.options.forEach(opt => {
+        const optElement = document.getElementById(`optContainer_${q.id}_${opt.id}`);
+        const isRightAnswer = correctAnswers.includes(opt.id);
+        const isSelected = userSelected.includes(opt.id);
+
+        if (isRightAnswer) {
+          optElement.classList.add("correct-answer");
+        } else if (isSelected && !isRightAnswer) {
+          optElement.classList.add("wrong-selected");
+        }
+      });
+
+      // Disable inputs and button for this question
+      const qInputs = document.querySelectorAll(`input[name="${inputName}"]`);
+      qInputs.forEach(i => i.disabled = true);
+      document.getElementById(`btnSubmit_${q.id}`).disabled = true;
+
+      updateScoreBoard();
+    }
+
+    function submitAll() {
+      quizData.forEach(q => {
+        if (!answeredQuestions[q.id]) {
+          submitQuestion(q.id);
+        }
+      });
+    }
+
+    function updateScoreBoard() {
+      const answeredCount = Object.keys(answeredQuestions).length;
+      let correctCount = 0;
+
+      for (let qId in answeredQuestions) {
+        if (answeredQuestions[qId].isCorrect) {
+          correctCount++;
+        }
+      }
+
+      document.getElementById("correctCount").innerText = correctCount;
+      document.getElementById("answeredCount").innerText = answeredCount;
+      document.getElementById("totalCount").innerText = quizData.length;
+    }
+
+    function resetQuiz() {
+      answeredQuestions = {};
+      document.body.classList.remove("submitted");
+
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize quiz on load
+    renderQuiz();
+  </script>
+</body>
+</html>

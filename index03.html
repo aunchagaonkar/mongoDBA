@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Practice Quiz — Set 3</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      max-width: 1300px;
+      width: 94%;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #13aa52;
+    }
+    .score-box {
+      background: #e9f7ef;
+      border: 2px solid #13aa52;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: normal;
+      background: #eee;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .question-text {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+    }
+    code {
+      background: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+    .option-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .option-item:hover {
+      background-color: #f5f5f5;
+    }
+    .option-item input {
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+    .option-label {
+      flex: 1;
+    }
+    /* Feedback styling */
+    .option-item.correct-answer {
+      background-color: #d4edda !important;
+      border-color: #c3e6cb !important;
+      color: #155724 !important;
+      font-weight: bold;
+    }
+    .option-item.wrong-selected {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid #13aa52;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .q-submitted .explanation {
+      display: block;
+    }
+    .btn-submit-q {
+      background-color: #13aa52;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-submit-q:hover {
+      background-color: #118f45;
+    }
+    .btn-submit-q:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .actions-bar {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-main {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn-main:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MongoDB DBA Practice Quiz — Set 3</h1>
+  <div id="scoreBox" class="score-box">
+    Score: <span id="correctCount">0</span> / <span id="answeredCount">0</span> Answered &nbsp;|&nbsp; Total Questions: <span id="totalCount">30</span>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="actions-bar">
+    <button type="button" class="btn-main" onclick="submitAll()">Submit All Remaining</button>
+    <button type="button" class="btn-main" style="background-color:#6c757d;" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        text: "A `sessions` collection stores one document per user session, each with a `durationMinutes` field. An administrator needs the five longest sessions, ordered from longest to shortest, and needs the same five documents returned in the same order every time the query runs.\n\nWhich query should the administrator use?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.sessions.find().sort({ durationMinutes: -1, _id: 1 }).limit(5)" },
+          { id: "b", text: "db.sessions.find({}, { sort: { durationMinutes: -1 }, limit: 5 })" },
+          { id: "c", text: "db.sessions.find().limit(5).sort({ durationMinutes: -1 })" },
+          { id: "d", text: "db.sessions.find().sort({ durationMinutes: 1 }).limit(5)" }
+        ],
+        answer: ["a"],
+        explanation: "sort() and limit() are cursor methods. Adding _id: 1 as a tiebreaker guarantees a stable order when several sessions share the same duration."
+      },
+      {
+        id: 2,
+        text: "A `trips` collection contains records of bike-share trips. An administrator needs the **number** of trips whose `durationSeconds` value exceeds 1800.\n\nWhich operation returns that number?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.trips.find({ durationSeconds: { $gt: 1800 } })" },
+          { id: "b", text: "db.trips.countDocuments({ durationSeconds: { $gt: 1800 } })" },
+          { id: "c", text: "db.trips.countDocuments({ durationSeconds: 1800 })" },
+          { id: "d", text: "db.trips.find({ durationSeconds: { $gt: 1800 } }).limit(1)" }
+        ],
+        answer: ["b"],
+        explanation: "countDocuments() takes a query document and returns the count of matching documents."
+      },
+      {
+        id: 3,
+        text: "A `routes` collection stores flight routes with the fields `src_airport`, `dst_airport`, `stops`, and `airline.name`. An administrator needs every route that **either departs from or arrives at** `\"BOM\"`, **and** that is **either nonstop or operated by** `\"Air India\"`.\n\nWhich query expresses this correctly?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.routes.find({ $or: [ { src_airport: \"BOM\" }, { dst_airport: \"BOM\" }, { stops: 0 }, { \"airline.name\": \"Air India\" } ] })" },
+          { id: "b", text: "db.routes.find({ $and: [ { $or: [ { src_airport: \"BOM\" }, { dst_airport: \"BOM\" } ] }, { $or: [ { stops: 0 }, { \"airline.name\": \"Air India\" } ] } ] })" },
+          { id: "c", text: "db.routes.find({ $or: [ { src_airport: \"BOM\", dst_airport: \"BOM\" }, { stops: 0, \"airline.name\": \"Air India\" } ] })" },
+          { id: "d", text: "db.routes.find({ src_airport: \"BOM\", dst_airport: \"BOM\", stops: 0, \"airline.name\": \"Air India\" })" }
+        ],
+        answer: ["b"],
+        explanation: "The requirement is a conjunction of two disjunctions, which needs an explicit $and whose array holds two $or expressions."
+      },
+      {
+        id: 4,
+        text: "A `vendors` collection contains documents shaped like this:\n\n```js\n{\n  _id: 1,\n  name: \"Godavari Supplies\",\n  contact: { email: \"sales@godavari.example\", phone: \"555-0117\", fax: \"555-0118\" }\n}\n```\n\nAn administrator must change only the `phone` value, leaving `email` and `fax` untouched.\n\nWhich update document should be used?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "{ $set: { contact: { phone: \"555-0200\" } } }" },
+          { id: "b", text: "{ $set: { \"contact.phone\": \"555-0200\" } }" },
+          { id: "c", text: "{ $push: { \"contact.phone\": \"555-0200\" } }" },
+          { id: "d", text: "{ $set: { contact.phone: \"555-0200\" } }" }
+        ],
+        answer: ["b"],
+        explanation: "Dot notation addresses a single field inside a subdocument, leaving other subdocument fields untouched. The path must be quoted."
+      },
+      {
+        id: 5,
+        text: "A developer inserts the following document into a `readings` collection, which already contains several thousand documents:\n\n```js\ndb.readings.insertOne({ sensor: \"S-14\", celsius: 31.8 })\n```\n\nWhat happens to the `_id` field for this document?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The insert fails, because every document must supply an _id value explicitly." },
+          { id: "b", text: "The document is stored without an _id field, since none was provided." },
+          { id: "c", text: "MongoDB adds an _id field and populates it with a generated ObjectId value." },
+          { id: "d", text: "MongoDB adds an _id field and populates it with the next integer in sequence for the collection." }
+        ],
+        answer: ["c"],
+        explanation: "When an inserted document omits _id, MongoDB creates the field and populates it with a generated ObjectId."
+      },
+      {
+        id: 6,
+        text: "A university application tracks students, the courses they enrol in, each course's assigned lecture hall, and each student's transcript.\n\nWhich of these represents a **many-to-many** relationship?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "A student and that student's transcript" },
+          { id: "b", text: "A course and the lecture hall assigned to it" },
+          { id: "c", text: "Students and the courses they enrol in" },
+          { id: "d", text: "A course and the assignments submitted for it" }
+        ],
+        answer: ["c"],
+        explanation: "A student enrols in many courses, and each course has many students — many entities on both sides."
+      },
+      {
+        id: 7,
+        text: "A team currently embeds a growing array of review subdocuments inside each product document. To control document growth, they move the reviews into a separate `reviews` collection that references the product by `_id`.\n\nWhich tradeoff are they accepting?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Product documents will duplicate review data across collections, increasing total storage." },
+          { id: "b", text: "Displaying a product together with its reviews now requires an additional query, so that read path becomes slower." },
+          { id: "c", text: "Reviews can no longer be indexed, because indexes cannot span two collections." },
+          { id: "d", text: "The reviews collection cannot enforce a relationship, because MongoDB does not permit storing one document's _id in another document." }
+        ],
+        answer: ["b"],
+        explanation: "Referencing avoids unbounded documents, but retrieving a product with its reviews now requires a second query."
+      },
+      {
+        id: 8,
+        text: "A team running an M0 free-tier cluster reports that several queries have become slow. They want MongoDB to analyse their slow queries and recommend indexes to create.\n\nWhat should the database administrator tell them?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Performance Advisor analyses slow queries and suggests indexes, but it requires an M10 or higher cluster tier." },
+          { id: "b", text: "Performance Advisor is available on all cluster tiers, but only through the Atlas CLI on shared tiers." },
+          { id: "c", text: "Performance Advisor requires MongoDB Enterprise and is not part of Atlas." },
+          { id: "d", text: "Performance Advisor is unavailable in Atlas; index recommendations come from $indexStats." }
+        ],
+        answer: ["a"],
+        explanation: "Performance Advisor identifies slow queries and recommends indexes, and requires an M10 or higher cluster tier."
+      },
+      {
+        id: 9,
+        text: "An administrator writes a maintenance script to be run with `load()` inside `mongosh`. The script begins with `use sample_analytics` and then queries a collection. When the script is loaded, it throws an error at the first line.\n\nHow should the script select the database?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Replace use sample_analytics with db.getSiblingDB(\"sample_analytics\")." },
+          { id: "b", text: "Replace use sample_analytics with db.getMongo(\"sample_analytics\")." },
+          { id: "c", text: "Replace use sample_analytics with db.getDb(\"sample_analytics\")." },
+          { id: "d", text: "Leave the script as written and pass the database name to load() as a second argument." }
+        ],
+        answer: ["a"],
+        explanation: "`use` is a mongosh shell helper not valid in JS scripts. Use `db.getSiblingDB(\"<name>\")`."
+      },
+      {
+        id: 10,
+        text: "An administrator needs to start `mongosh`, connect to an Atlas cluster, and have the `sample_analytics` database selected on connection.\n\nWhich command works?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongosh \"mongodb+srv://cluster0.abcde.mongodb.net/\" --username dbaUser --db sample_analytics" },
+          { id: "b", text: "mongosh \"mongodb+srv://cluster0.abcde.mongodb.net/?database=sample_analytics\" --username dbaUser" },
+          { id: "c", text: "mongosh \"mongodb+srv://cluster0.abcde.mongodb.net/sample_analytics\" --username dbaUser" },
+          { id: "d", text: "mongosh --host cluster0.abcde.mongodb.net --db sample_analytics --username dbaUser" }
+        ],
+        answer: ["c"],
+        explanation: "The database name is supplied as the path component of the connection URI string."
+      },
+      {
+        id: 11,
+        text: "A developer working from a new office location attempts to connect an application to an Atlas cluster and receives:\n\n```text\nMongoServerSelectionError: connection <monitor> to 34.239.188.169:27017 closed\n```\n\nThe same connection string works from the developer's home network.\n\nWhat should the developer do?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Update the database user's password in the Atlas Database Access panel." },
+          { id: "b", text: "Add the new location's IP address to the allowlist in the Atlas Network Access panel." },
+          { id: "c", text: "Create a new database on the cluster so the connection string resolves." },
+          { id: "d", text: "Change the connection string from mongodb+srv:// to mongodb://." }
+        ],
+        answer: ["b"],
+        explanation: "A MongoServerSelectionError with a closed connection indicates that the client's IP is not on the Atlas IP allowlist."
+      },
+      {
+        id: 12,
+        text: "An application that has been running for months begins failing at startup with:\n\n```text\nMongoServerError: bad auth : Authentication failed.\n```\n\nWhich checks address this specific error?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Confirm the current IP address is on the Atlas allowlist, and confirm the cluster is not paused." },
+          { id: "b", text: "Confirm the username and password are spelled correctly in the connection string, and confirm the connection targets the correct database deployment." },
+          { id: "c", text: "Confirm the cluster tier supports the number of concurrent connections the application opens." },
+          { id: "d", text: "Confirm the driver version is compatible with the server version." }
+        ],
+        answer: ["b"],
+        explanation: "bad auth is an authentication failure; check username, password, and target authentication database."
+      },
+      {
+        id: 13,
+        text: "MongoDB stores indexed field values in a B-tree structure.\n\nWhich statements about B-trees are accurate?",
+        isMulti: true,
+        options: [
+          { id: "a", text: "A B-tree is a self-balancing tree data structure." },
+          { id: "b", text: "B-trees store their data sorted in ascending order from left to right." },
+          { id: "c", text: "A node in a B-tree can have more than two child nodes." },
+          { id: "d", text: "\"B-tree\" is an abbreviation of \"binary tree\"." }
+        ],
+        answer: ["a", "b", "c"],
+        explanation: "B-tree is a self-balancing tree structure with sorted keys and multiple children per node. It is NOT an abbreviation for binary tree."
+      },
+      {
+        id: 14,
+        text: "An administrator reviews the following `explain(\"executionStats\")` output for a query on a `logins` collection. The winning plan uses an index and contains no `SORT` stage.\n\n```js\n{\n  executionStats: {\n    nReturned: 120,\n    executionTimeMillis: 640,\n    totalKeysExamined: 48000,\n    totalDocsExamined: 48000\n  }\n}\n```\n\nWhat does this pattern indicate?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The query is well optimised, because the number of keys examined equals the number of documents examined." },
+          { id: "b", text: "An index is being used, but its bounds are not selective for this query: 48,000 index entries were scanned to return 120 documents." },
+          { id: "c", text: "The index is multikey, which always causes more keys to be examined than documents returned." },
+          { id: "d", text: "The query is covered, because totalKeysExamined and totalDocsExamined are equal." }
+        ],
+        answer: ["b"],
+        explanation: "Scanning 48,000 index keys to return only 120 documents shows that the index bounds are not selective for the query."
+      },
+      {
+        id: 15,
+        text: "An `ingest` collection has documents with unpredictable field names, plus two very large fields, `payload` and `rawText`, that are never used as query filters. The administrator wants a wildcard index over every field **except** those two.\n\nWhich command creates it?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "db.ingest.createIndex({ \"$**\": 1 }, { wildcardProjection: { payload: 0, rawText: 0 } })" },
+          { id: "b", text: "db.ingest.createIndex({ \"$**\": 1, payload: 0, rawText: 0 })" },
+          { id: "c", text: "db.ingest.createIndex({ \"payload.$**\": 0, \"rawText.$**\": 0 })" },
+          { id: "d", text: "db.ingest.createIndex({ \"$**\": 1 }, { partialFilterExpression: { payload: 0, rawText: 0 } })" }
+        ],
+        answer: ["a"],
+        explanation: "wildcardProjection excludes specific field paths from an all-fields wildcard index {\"$**\": 1}."
+      },
+      {
+        id: 16,
+        text: "A clustered collection named `weather` has its internal clustered index on `_id` and a secondary index on `metadata.sensorId`. An administrator runs `db.weather.find({ \"metadata.sensorId\": 5578 })` and wants to know which index will be used.\n\nWhat should the administrator expect?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The clustered index, because a clustered collection's internal index always takes precedence." },
+          { id: "b", text: "The secondary index, because the query planner selects the eligible secondary index unless it is overridden with hint()." },
+          { id: "c", text: "Neither index; queries on clustered collections always perform a collection scan." },
+          { id: "d", text: "Both indexes, because MongoDB intersects the clustered index with each eligible secondary index." }
+        ],
+        answer: ["b"],
+        explanation: "When a clustered collection has an eligible secondary index, the query planner selects the secondary index."
+      },
+      {
+        id: 17,
+        text: "A security team asks the database administrator to produce the `mongod` logs from an Atlas M30 cluster covering an incident that occurred 45 days ago.\n\nWhat should the administrator report?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The logs are available; Atlas retains log messages indefinitely for M10 and above clusters." },
+          { id: "b", text: "The logs are no longer available through Atlas; Atlas retains the most recent 30 days of log messages." },
+          { id: "c", text: "The logs are available only through the Atlas CLI, because the UI exposes just the last 24 hours." },
+          { id: "d", text: "The logs are available after enabling the audit log retroactively for that period." }
+        ],
+        answer: ["b"],
+        explanation: "Atlas retains the most recent 30 days of log messages for M10 and above clusters."
+      },
+      {
+        id: 18,
+        text: "An administrator is troubleshooting index build behaviour on a self-managed deployment and needs more detailed debug messages from the `INDEX` component specifically, without flooding the log with debug output from every other component.\n\nWhat should the administrator configure?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Set systemLog.verbosity: 5 in mongod.conf." },
+          { id: "b", text: "Set a verbosity level for the index component under systemLog.component in mongod.conf." },
+          { id: "c", text: "Run db.setProfilingLevel(2) so all index operations are captured." },
+          { id: "d", text: "Lower slowms to 0 so every index operation is logged as slow." }
+        ],
+        answer: ["b"],
+        explanation: "systemLog.component allows setting custom log verbosity per component (e.g. index)."
+      },
+      {
+        id: 19,
+        text: "An administrator needs to add a fourth member to a running three-member replica set. The administrator has already run `config = rs.conf()` and appended the new member to `config.members`.\n\nWhat must be run next for the change to take effect?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "rs.initiate(config)" },
+          { id: "b", text: "rs.reconfig(config)" },
+          { id: "c", text: "rs.status(config)" },
+          { id: "d", text: "rs.stepDown()" }
+        ],
+        answer: ["b"],
+        explanation: "rs.reconfig(config) submits and applies modified configuration to a running replica set."
+      },
+      {
+        id: 20,
+        text: "A payments application must never read a value that could later be rolled back after a failover. Reads must return only data that has been acknowledged by a majority of the replica set members.\n\nWhat should be configured?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Set the read preference to secondary." },
+          { id: "b", text: "Set the write concern to majority." },
+          { id: "c", text: "Set the read concern to majority." },
+          { id: "d", text: "Set maxStalenessSeconds to 90." }
+        ],
+        answer: ["c"],
+        explanation: "Read concern majority returns only data acknowledged by a majority of members, preventing reads of uncommitted data."
+      },
+      {
+        id: 21,
+        text: "A monitoring script connects to one node of a replica set and must determine whether that specific node is currently able to accept write operations, so the script can route accordingly.\n\nWhich method returns this information?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "rs.conf()" },
+          { id: "b", text: "db.hello()" },
+          { id: "c", text: "rs.printReplicationInfo()" },
+          { id: "d", text: "db.serverStatus().mem" }
+        ],
+        answer: ["b"],
+        explanation: "db.hello() returns node state details including isWritablePrimary."
+      },
+      {
+        id: 22,
+        text: "An Atlas alert fires reporting that Query Targeting for a cluster has reached a ratio of roughly 1500 scanned objects per document returned.\n\nWhat does this indicate, and what is the target value?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The workload is scanning far more data than it returns, indicating missing or unselective indexes; the ideal ratio is about 1:1." },
+          { id: "b", text: "1500 concurrent operations are queued; the ideal value is under 100." },
+          { id: "c", text: "Documents average 1500 bytes; the ideal value depends on the cluster tier." },
+          { id: "d", text: "The oplog is 1500 seconds behind; the ideal value is 0." }
+        ],
+        answer: ["a"],
+        explanation: "Query Targeting measures scanned objects per document returned. A high ratio indicates unselective indexes; target is 1:1."
+      },
+      {
+        id: 23,
+        text: "A team configures a Query Targeting alert on an M5 shared-tier cluster and sets a threshold they know is being exceeded. The alert never triggers, and the alert configuration shows as enabled.\n\nWhat explains this?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Alert configurations must be created through the Atlas CLI to take effect on shared-tier clusters." },
+          { id: "b", text: "Shared-tier clusters trigger alerts only for the metrics they support — Network, Connections, Logical Size, and Opcounters." },
+          { id: "c", text: "Query Targeting alerts cannot be configured on any cluster tier." },
+          { id: "d", text: "The alert requires a notification interval of at least 60 minutes before it will evaluate." }
+        ],
+        answer: ["b"],
+        explanation: "Shared-tier clusters only collect a subset of metrics (Network, Connections, Logical Size, Opcounters), so unsupported alerts never fire."
+      },
+      {
+        id: 24,
+        text: "An administrator receives a Disk Queue Depth alert from Atlas, investigates, and acknowledges the alert with a comment while the remediation work is planned.\n\nWhat is the effect on the alert's status?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The status changes to CLOSED, because acknowledging an alert resolves it." },
+          { id: "b", text: "The status remains open; an alert changes to CLOSED only once the condition that triggered it is resolved." },
+          { id: "c", text: "The status changes to CLOSED after the notification interval elapses." },
+          { id: "d", text: "The status remains open until a Project Owner manually sets it to CLOSED." }
+        ],
+        answer: ["b"],
+        explanation: "Acknowledging an alert suppresses notifications, but status changes to CLOSED only when the condition clears."
+      },
+      {
+        id: 25,
+        text: "A company monitors its Atlas clusters with Prometheus through the Atlas integration. It now wants the same Prometheus server to collect metrics from a self-managed MongoDB deployment in its own data centre.\n\nWhat should be configured as the Prometheus target?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Grafana, configured to poll the self-managed deployment and expose the metrics" },
+          { id: "b", text: "The Percona MongoDB Exporter, running against the deployment and exposing a metrics endpoint" },
+          { id: "c", text: "A custom webhook configured in the Atlas project settings" },
+          { id: "d", text: "The Atlas CLI, run on a schedule with atlas metrics processes" }
+        ],
+        answer: ["b"],
+        explanation: "Percona MongoDB Exporter runs against a self-managed MongoDB deployment to expose Prometheus metrics."
+      },
+      {
+        id: 26,
+        text: "A business requires a Recovery Point Objective of 15 minutes and a Recovery Time Objective of 1 hour for its order database. The current strategy is a single `mongodump` run nightly at 02:00. A failure occurs at 16:00.\n\nWhich objective does the current strategy fail to meet, and why?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "The RPO, because up to 14 hours of writes since the last backup would be lost." },
+          { id: "b", text: "The RTO, because mongodump archives always take longer than one hour to restore." },
+          { id: "c", text: "Both, because logical backups cannot be used to satisfy any recovery objective." },
+          { id: "d", text: "Neither, because mongodump captures the oplog by default and therefore supports point-in-time recovery." }
+        ],
+        answer: ["a"],
+        explanation: "RPO is acceptable data loss time span. Losing 14 hours of data exceeds the 15-minute RPO."
+      },
+      {
+        id: 27,
+        text: "An administrator must create a dedicated user for a nightly `mongodump` job on a self-managed replica set. Security policy requires the minimum privileges necessary for the task.\n\nWhich built-in role should be granted?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "root" },
+          { id: "b", text: "backup" },
+          { id: "c", text: "dbOwner" },
+          { id: "d", text: "readWriteAnyDatabase" }
+        ],
+        answer: ["b"],
+        explanation: "The built-in `backup` role provides the minimal privileges required for mongodump."
+      },
+      {
+        id: 28,
+        text: "An administrator is performing a rolling MongoDB server upgrade on a three-member replica set and has finished upgrading both secondaries, verifying each one is healthy.\n\nWhat is the next step?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "Set the feature compatibility version to the new value, then upgrade the primary." },
+          { id: "b", text: "Remove the primary from the replica set, upgrade it, and add it back." },
+          { id: "c", text: "Step down the primary to trigger an election, then upgrade the former primary." },
+          { id: "d", text: "Upgrade the primary in place without stepping it down, since a majority is already upgraded." }
+        ],
+        answer: ["c"],
+        explanation: "rs.stepDown() causes a newly upgraded secondary to be elected primary, allowing the former primary to be upgraded."
+      },
+      {
+        id: 29,
+        text: "A data science team asks for an export of the `customers` collection in YAML format so it can be loaded into their pipeline.\n\nWhat should the database administrator tell them?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongoexport supports YAML output using the --type=yaml option." },
+          { id: "b", text: "mongoexport produces JSON or CSV output only; YAML is not a supported format." },
+          { id: "c", text: "mongoexport produces YAML only when combined with --jsonFormat canonical." },
+          { id: "d", text: "bsondump should be used instead, because it converts BSON directly to YAML." }
+        ],
+        answer: ["b"],
+        explanation: "mongoexport writes JSON or CSV output formats only; YAML is not supported."
+      },
+      {
+        id: 30,
+        text: "A production deployment is a sharded cluster holding several terabytes of data. A junior administrator proposes backing it up with a nightly `mongodump` and restoring with `mongorestore` if needed.\n\nWhy is this proposal inappropriate?",
+        isMulti: false,
+        options: [
+          { id: "a", text: "mongodump and mongorestore are intended for standalone deployments and replica sets, and are not recommended for sharded clusters." },
+          { id: "b", text: "mongodump cannot connect through mongos, so it can only ever back up the config servers." },
+          { id: "c", text: "mongodump requires the --oplog option on sharded clusters, and that option is unavailable in the Database Tools package." },
+          { id: "d", text: "mongorestore can restore only to a cluster with the identical number of shards, which cannot be guaranteed." }
+        ],
+        answer: ["a"],
+        explanation: "mongodump/mongorestore cannot guarantee cluster-wide consistency across shards and are not recommended for multi-terabyte sharded clusters."
+      }
+    ];
+
+    // State tracking
+    let answeredQuestions = {}; // q.id -> { isCorrect: bool, userSelected: [] }
+
+    function formatText(rawText) {
+      let text = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      text = text.replace(/```(js|json|text)?\n([\s\S]*?)\n```/g, function(match, lang, code) {
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      return text;
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `qCard_${q.id}`;
+
+        const inputType = q.isMulti ? "checkbox" : "radio";
+        const inputName = `q_${q.id}`;
+        const badgeText = q.isMulti ? "Select all that apply" : "Select one";
+
+        let optionsHTML = "";
+        q.options.forEach(opt => {
+          optionsHTML += `
+            <li class="option-item" id="optContainer_${q.id}_${opt.id}">
+              <input type="${inputType}" name="${inputName}" value="${opt.id}" id="input_${q.id}_${opt.id}">
+              <label class="option-label" for="input_${q.id}_${opt.id}">
+                <strong>${opt.id.toUpperCase()}.</strong> ${formatText(opt.text)}
+              </label>
+            </li>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="question-header">
+            <div class="question-title">
+              Question ${index + 1}
+              <span class="badge">${badgeText}</span>
+            </div>
+            <button type="button" class="btn-submit-q" id="btnSubmit_${q.id}" onclick="submitQuestion(${q.id})">Submit Answer</button>
+          </div>
+          <div class="question-text">${formatText(q.text)}</div>
+          <ul class="options-list">
+            ${optionsHTML}
+          </ul>
+          <div class="explanation" id="exp_${q.id}">
+            <strong>Explanation:</strong> ${formatText(q.explanation)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateScoreBoard();
+    }
+
+    function submitQuestion(qId) {
+      const q = quizData.find(item => item.id === qId);
+      if (!q) return;
+
+      const inputName = `q_${q.id}`;
+      const selectedInputs = document.querySelectorAll(`input[name="${inputName}"]:checked`);
+      const userSelected = Array.from(selectedInputs).map(i => i.value);
+
+      if (userSelected.length === 0) {
+        if (!confirm("You haven't selected any option. Are you sure you want to submit?")) {
+          return;
+        }
+      }
+
+      const correctAnswers = q.answer;
+      const isCorrect = userSelected.length === correctAnswers.length &&
+        userSelected.every(val => correctAnswers.includes(val));
+
+      // Save state
+      answeredQuestions[q.id] = { isCorrect, userSelected };
+
+      // Add submitted class to card to reveal explanation
+      const card = document.getElementById(`qCard_${q.id}`);
+      card.classList.add("q-submitted");
+
+      // Highlight options for this question
+      q.options.forEach(opt => {
+        const optElement = document.getElementById(`optContainer_${q.id}_${opt.id}`);
+        const isRightAnswer = correctAnswers.includes(opt.id);
+        const isSelected = userSelected.includes(opt.id);
+
+        if (isRightAnswer) {
+          optElement.classList.add("correct-answer");
+        } else if (isSelected && !isRightAnswer) {
+          optElement.classList.add("wrong-selected");
+        }
+      });
+
+      // Disable inputs and button for this question
+      const qInputs = document.querySelectorAll(`input[name="${inputName}"]`);
+      qInputs.forEach(i => i.disabled = true);
+      document.getElementById(`btnSubmit_${q.id}`).disabled = true;
+
+      updateScoreBoard();
+    }
+
+    function submitAll() {
+      quizData.forEach(q => {
+        if (!answeredQuestions[q.id]) {
+          submitQuestion(q.id);
+        }
+      });
+    }
+
+    function updateScoreBoard() {
+      const answeredCount = Object.keys(answeredQuestions).length;
+      let correctCount = 0;
+
+      for (let qId in answeredQuestions) {
+        if (answeredQuestions[qId].isCorrect) {
+          correctCount++;
+        }
+      }
+
+      document.getElementById("correctCount").innerText = correctCount;
+      document.getElementById("answeredCount").innerText = answeredCount;
+      document.getElementById("totalCount").innerText = quizData.length;
+    }
+
+    function resetQuiz() {
+      answeredQuestions = {};
+      document.body.classList.remove("submitted");
+
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize quiz on load
+    renderQuiz();
+  </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB DBA Study Reader</title>
+  <!-- Highlight.js CSS for Code Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <style>
+    :root {
+      --primary: #00ED64;
+      --primary-dark: #001E2B;
+      --accent: #13AA52;
+      --bg: #FFFFFF;
+      --sidebar-bg: #F9FBFB;
+      --text: #1C2D42;
+      --text-muted: #5C6F84;
+      --border: #E1E8ED;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      padding: 20px 15px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .sidebar-header a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      color: var(--primary-dark);
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: #E8F8F0;
+      color: var(--accent);
+    }
+
+    .sidebar-menu a.active {
+      background-color: var(--primary-dark);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .content-area {
+      flex-grow: 1;
+      padding: 40px 60px;
+      max-width: 1400px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
+    }
+
+    .markdown-body h1 {
+      font-size: 2rem;
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.15rem;
+      color: var(--primary-dark);
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+    .markdown-body p {
+      line-height: 1.7;
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+
+    .markdown-body ul, .markdown-body ol {
+      margin-bottom: 18px;
+      padding-left: 24px;
+      line-height: 1.6;
+    }
+
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--accent);
+      background-color: #F8F9FA;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      color: var(--text-muted);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .markdown-body code {
+      font-family: Consolas, Monaco, monospace;
+      background-color: #F0F4F8;
+      color: #D63384;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .markdown-body pre {
+      background-color: #272822;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      color: #F8F8F2;
+      padding: 0;
+      font-size: 0.93rem;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+
+    .markdown-body th, .markdown-body td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    .markdown-body th {
+      background-color: var(--sidebar-bg);
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .markdown-body tr:nth-child(even) {
+      background-color: #FAFAFA;
+    }
+
+    /* Mobile Responsive Toggle */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--primary-dark);
+      color: var(--primary);
+      border: none;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 1000;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        display: none;
+      }
+
+      .sidebar.open {
+        display: block;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .content-area {
+      flex-grow: 1;
+      padding: 40px 60px;
+      max-width: 1400px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
+    }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html">&larr; Portal Dashboard</a>
+      <h2>Study Modules</h2>
+    </div>
+
+    <ul class="sidebar-menu" id="moduleList">
+      <li><a href="reader.html?file=Chapter1.md" data-file="Chapter1.md">Ch 01: Document Model</a></li>
+      <li><a href="reader.html?file=Chapter2.md" data-file="Chapter2.md">Ch 02: Data Modeling Intro</a></li>
+      <li><a href="reader.html?file=Chapter3.md" data-file="Chapter3.md">Ch 03: MongoDB Shell</a></li>
+      <li><a href="reader.html?file=Chapter4.md" data-file="Chapter4.md">Ch 04: Connecting & Drivers</a></li>
+      <li><a href="reader.html?file=Chapter5.md" data-file="Chapter5.md">Ch 05: CRUD: Insert & Find</a></li>
+      <li><a href="reader.html?file=Chapter6.md" data-file="Chapter6.md">Ch 06: CRUD: Replace & Delete</a></li>
+      <li><a href="reader.html?file=Chapter7.md" data-file="Chapter7.md">Ch 07: Query Results</a></li>
+      <li><a href="reader.html?file=Chapter8.md" data-file="Chapter8.md">Ch 08: Indexes & Explain</a></li>
+      <li><a href="reader.html?file=Chapter9.md" data-file="Chapter9.md">Ch 09: Advanced Indexes</a></li>
+      <li><a href="reader.html?file=Chapter10.md" data-file="Chapter10.md">Ch 10: Server Logging</a></li>
+      <li><a href="reader.html?file=Chapter11.md" data-file="Chapter11.md">Ch 11: MongoDB Atlas</a></li>
+      <li><a href="reader.html?file=Chapter12.md" data-file="Chapter12.md">Ch 12: DBA CLI Tools</a></li>
+      <li><a href="reader.html?file=Chapter13.md" data-file="Chapter13.md">Ch 13: Metrics & Monitoring</a></li>
+      <li><a href="reader.html?file=Chapter14.md" data-file="Chapter14.md">Ch 14: Backup & Recovery</a></li>
+      <li><a href="reader.html?file=Chapter15.md" data-file="Chapter15.md">Ch 15: Upgrades & Maintenance</a></li>
+      <li><a href="reader.html?file=Chapter16.md" data-file="Chapter16.md">Ch 16: Replication</a></li>
+      <li><a href="reader.html?file=Chapter17.md" data-file="Chapter17.md">Ch 17: Database Security</a></li>
+      <li style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <a href="reader.html?file=PracticeQuestions.md" data-file="PracticeQuestions.md">Core Practice Bank (.md)</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Mobile Toggle -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">Menu Modules</button>
+
+  <!-- Main Content Area -->
+  <main class="content-area">
+    <div id="markdownContent" class="markdown-body">
+      <p style="color: var(--text-muted);">Loading study module...</p>
+    </div>
+  </main>
+
+  <!-- Markdown Parser & Highlight.js Libraries -->
+  <script src="chapters.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+
+  <script>
+    // Configure Marked to use Highlight.js
+    marked.setOptions({
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      },
+      breaks: true
+    });
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadMarkdown() {
+      let file = getQueryParam('file') || 'Chapter1.md';
+
+      // Highlight active link in sidebar
+      const links = document.querySelectorAll('.sidebar-menu a');
+      links.forEach(link => {
+        if (link.getAttribute('data-file') === file) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      const contentDiv = document.getElementById('markdownContent');
+
+      try {
+        let markdownText = '';
+        if (window.CHAPTERS_DATA && window.CHAPTERS_DATA[file]) {
+          markdownText = window.CHAPTERS_DATA[file];
+        } else {
+          const response = await fetch(file);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          markdownText = await response.text();
+        }
+
+        contentDiv.innerHTML = marked.parse(markdownText);
+
+        // Run syntax highlighting on all pre code blocks
+        document.querySelectorAll('pre code').forEach((el) => {
+          hljs.highlightElement(el);
+        });
+
+        // Set document title
+        const firstHeading = contentDiv.querySelector('h1');
+        if (firstHeading) {
+          document.title = firstHeading.innerText + ' — MongoDB DBA Study Guide';
+        }
+      } catch (err) {
+        contentDiv.innerHTML = `<h2 style="color: #d9534f;">Failed to load module</h2><p>Could not load <code>${file}</code>. Make sure the file exists and is accessible.</p><p><a href="index.html">&larr; Return to Dashboard</a></p>`;
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+
+    loadMarkdown();
+  </script>
+</body>
+</html>
